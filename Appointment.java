@@ -27,7 +27,7 @@ public class Appointment{
     public void showdetails(){
         System.out.println("------------------------");
         System.out.println("Name:",pname);
-        System.out.printf("Date: %d/%d \n",datearray[0],datearray[2]);
+        System.out.printf("Date: %d/%d \n",datearray[0],datearray[1]);
         System.out.println("Timeslot:",timeslot);
         if (acceptedstatus==0) System.out.println("Pending acceptance");
         else if (acceptedstatus==1) System.out.println("Upcoming");
