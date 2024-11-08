@@ -155,76 +155,166 @@ public class Administrator extends User {
     }
 
     private void manageMedicationInventory() {
-        int choice = 0;
-        boolean managing = true;
-        while (managing) {
-            System.out.println("\n1. View inventory");
-            System.out.println("2. Update stock level");
-            System.out.println("3. Update alert level");
-            System.out.println("4. Return to main menu");
-            System.out.println("Enter your choice:");
-            
-            choice = sc.nextInt();
-            sc.nextLine(); // Clear buffer
-            
-            switch (choice) {
-                case 1:
-                    viewInventory();
-                    break;
-                case 2:
-                    updateStockLevel();
-                    break;
-                case 3:
-                    updateAlertLevel();
-                    break;
-                case 4:
-                    managing = false;
-                    break;
-                default:
-                    System.out.println("Invalid choice.");
+    int choice = 0;
+    boolean managing = true;
+    while (managing) {
+        System.out.println("\n1. View inventory");
+        System.out.println("2. Update stock level");
+        System.out.println("3. Update alert level");
+        System.out.println("4. Return to main menu");
+        System.out.println("Enter your choice:");
+        
+        choice = sc.nextInt();
+        sc.nextLine(); // Clear buffer
+        
+        switch (choice) {
+            case 1:
+                viewInventory();
+                break;
+            case 2:
+                updateStockLevel();
+                break;
+            case 3:
+                updateAlertLevel();
+                break;
+            case 4:
+                managing = false;
+                break;
+            default:
+                System.out.println("Invalid choice.");
+        }
+    }
+}
+
+private void viewInventory() {
+    try {
+        BufferedReader br = new BufferedReader(new FileReader("Medicine_List.csv"));
+        String line;
+        boolean firstLine = true;
+        System.out.println("\nCurrent Medication Inventory:");
+        System.out.println("Medicine Name | Stock | Low Stock Alert Level");
+        System.out.println("----------------------------------------");
+        while ((line = br.readLine()) != null) {
+            if (firstLine) {
+                firstLine = false;
+                continue;
+            }
+            String[] med = line.split(",");
+            System.out.println(med[0] + " | " + med[1] + " | " + med[2]);
+        }
+        br.close();
+    } catch (IOException e) {
+        System.out.println("Error reading Medicine_List.csv");
+    }
+}
+
+private void updateStockLevel() {
+    try {
+        // First, read all data into memory
+        ArrayList<String[]> medicines = new ArrayList<>();
+        BufferedReader br = new BufferedReader(new FileReader("Medicine_List.csv"));
+        String line;
+        boolean firstLine = true;
+        String header = "";
+        
+        while ((line = br.readLine()) != null) {
+            if (firstLine) {
+                header = line;
+                firstLine = false;
+                continue;
+            }
+            medicines.add(line.split(","));
+        }
+        br.close();
+
+        // Get medicine to update
+        System.out.println("Enter medicine name:");
+        String medName = sc.nextLine();
+        
+        boolean found = false;
+        for (String[] med : medicines) {
+            if (med[0].equals(medName)) {
+                System.out.println("Current stock: " + med[1]);
+                System.out.println("Enter new stock level:");
+                String newStock = sc.nextLine();
+                med[1] = newStock;
+                found = true;
+                break;
             }
         }
-    }
 
-    private void viewInventory() {
-        System.out.println("Current Medication Inventory:");
-        for (Map.Entry<String, Medicine> entry : HospitalManagementSystem.getMedicationInventory().entrySet()) {
-            Medicine med = entry.getValue();
-            System.out.println("Medicine: " + med.getName() + 
-                             " | Stock: " + med.getStock() + 
-                             " | Alert Level: " + med.getLowStockAlert());
+        if (!found) {
+            System.out.println("Medicine not found.");
+            return;
         }
-    }
 
-    private void updateStockLevel() {
+        // Write updated data back to file
+        PrintWriter pw = new PrintWriter(new FileWriter("Medicine_List.csv"));
+        pw.println(header);
+        for (String[] med : medicines) {
+            pw.println(String.join(",", med));
+        }
+        pw.close();
+        System.out.println("Stock updated successfully.");
+
+    } catch (IOException e) {
+        System.out.println("Error updating Medicine_List.csv");
+    }
+}
+
+private void updateAlertLevel() {
+    try {
+        // First, read all data into memory
+        ArrayList<String[]> medicines = new ArrayList<>();
+        BufferedReader br = new BufferedReader(new FileReader("Medicine_List.csv"));
+        String line;
+        boolean firstLine = true;
+        String header = "";
+        
+        while ((line = br.readLine()) != null) {
+            if (firstLine) {
+                header = line;
+                firstLine = false;
+                continue;
+            }
+            medicines.add(line.split(","));
+        }
+        br.close();
+
+        // Get medicine to update
         System.out.println("Enter medicine name:");
         String medName = sc.nextLine();
-        Medicine med = HospitalManagementSystem.getMedicationInventory().get(medName);
-        if (med != null) {
-            System.out.println("Enter new stock level:");
-            int newStock = sc.nextInt();
-            sc.nextLine(); // Clear buffer
-            med.setStock(newStock);
-            System.out.println("Stock updated successfully.");
-        } else {
-            System.out.println("Medicine not found.");
+        
+        boolean found = false;
+        for (String[] med : medicines) {
+            if (med[0].equals(medName)) {
+                System.out.println("Current alert level: " + med[2]);
+                System.out.println("Enter new alert level:");
+                String newAlert = sc.nextLine();
+                med[2] = newAlert;
+                found = true;
+                break;
+            }
         }
-    }
 
-    private void updateAlertLevel() {
-        System.out.println("Enter medicine name:");
-        String medName = sc.nextLine();
-        Medicine med = HospitalManagementSystem.getMedicationInventory().get(medName);
-        if (med != null) {
-            System.out.println("Enter new alert level:");
-            int newAlert = sc.nextInt();
-            sc.nextLine(); // Clear buffer
-            med.setLowStockAlert(newAlert);
-            System.out.println("Alert level updated successfully.");
-        } else {
+        if (!found) {
             System.out.println("Medicine not found.");
+            return;
         }
+
+        // Write updated data back to file
+        PrintWriter pw = new PrintWriter(new FileWriter("Medicine_List.csv"));
+        pw.println(header);
+        for (String[] med : medicines) {
+            pw.println(String.join(",", med));
+        }
+        pw.close();
+        System.out.println("Alert level updated successfully.");
+
+    } catch (IOException e) {
+        System.out.println("Error updating Medicine_List.csv");
     }
+}
 
     private void approveReplenishmentRequests() {
         if (HospitalManagementSystem.replenishmentRequests.isEmpty()) {
