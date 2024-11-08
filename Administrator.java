@@ -2,12 +2,10 @@ import java.util.*;
 import java.io.*;
 
 public class Administrator extends User {
-    private ArrayList<User> staffList = new ArrayList<>();
     Scanner sc = new Scanner(System.in);
 
     Administrator(String userID, String password, String name, String Role) {
-        super(userID, password, name, Role);
-        importStaffList();
+        super(userID, password, name, Role);   
     }
 
     void showMenu() {
@@ -42,97 +40,240 @@ public class Administrator extends User {
         return true;
     }
 
-    private void importStaffList() {
-        String line = "";
-        String splitBy = ",";
-        try {
-            BufferedReader br = new BufferedReader(new FileReader("Staff_List.csv"));
-            boolean firstLine = true;
-            while ((line = br.readLine()) != null) {
-                if (firstLine) {
-                    firstLine = false;
-                    continue;
-                }
-                String[] staff = line.split(splitBy);
-                String staffID = staff[0];
-                String name = staff[1];
-                String role = staff[2];
-                String gender = staff[3];
-                int age = Integer.parseInt(staff[4]);
-                staffList.add(new User(staffID, role));
-            }
-            br.close();
-        } catch (IOException e) {
-            System.out.println("Error reading Staff_List.csv");
-        }
-    }
-
-    private void manageHospitalStaff() {
-        int choice = 0;
-        boolean managing = true;
-        while (managing) {
-            System.out.println("\n1. View all staff");
-            System.out.println("2. Add staff member");
-            System.out.println("3. Remove staff member");
-            System.out.println("4. Filter staff list");
-            System.out.println("5. Return to main menu");
-            System.out.println("Enter your choice:");
-            
-            choice = sc.nextInt();
-            sc.nextLine(); // Clear buffer
-            
-            switch (choice) {
-                case 1:
-                    viewAllStaff();
-                    break;
-                case 2:
-                    addStaffMember();
-                    break;
-                case 3:
-                    removeStaffMember();
-                    break;
-                case 4:
-                    filterStaffList();
-                    break;
-                case 5:
-                    managing = false;
-                    break;
-                default:
-                    System.out.println("Invalid choice.");
-            }
-        }
-    }
-
-    private void viewAllStaff() {
-        System.out.println("Current Staff List:");
-        for (User staff : staffList) {
-            System.out.println("ID: " + staff.getHospitalID() + ", Role: " + staff.getRole());
-        }
-    }
-
-    private void filterStaffList() {
-        System.out.println("Filter by:");
-        System.out.println("1. Role");
-        System.out.println("2. Gender");
-        System.out.println("3. Age");
-        int filterChoice = sc.nextInt();
+private void manageHospitalStaff() {
+    int choice = 0;
+    boolean managing = true;
+    while (managing) {
+        System.out.println("\n1. View all staff");
+        System.out.println("2. Add staff member");
+        System.out.println("3. Remove staff member");
+        System.out.println("4. Filter staff list");
+        System.out.println("5. Return to main menu");
+        System.out.println("Enter your choice:");
+        
+        choice = sc.nextInt();
         sc.nextLine(); // Clear buffer
+        
+        switch (choice) {
+            case 1:
+                viewAllStaff();
+                break;
+            case 2:
+                addStaffMember();
+                break;
+            case 3:
+                removeStaffMember();
+                break;
+            case 4:
+                filterStaffList();
+                break;
+            case 5:
+                managing = false;
+                break;
+            default:
+                System.out.println("Invalid choice.");
+        }
+    }
+}
+
+private void viewAllStaff() {
+    try {
+        BufferedReader br = new BufferedReader(new FileReader("Staff_List.csv"));
+        String line;
+        boolean firstLine = true;
+        System.out.println("\nCurrent Staff List:");
+        System.out.println("Staff ID | Name | Role | Gender | Age");
+        System.out.println("----------------------------------------");
+        while ((line = br.readLine()) != null) {
+            if (firstLine) {
+                firstLine = false;
+                continue;
+            }
+            String[] staff = line.split(",");
+            System.out.println(staff[0] + " | " + staff[1] + " | " + staff[2] + " | " + staff[3] + " | " + staff[4]);
+        }
+        br.close();
+    } catch (IOException e) {
+        System.out.println("Error reading Staff_List.csv");
+    }
+}
+
+private void addStaffMember() {
+    try {
+        System.out.println("\nEnter staff details:");
+        System.out.print("Staff ID: ");
+        String staffID = sc.nextLine();
+        
+        // Check if ID already exists
+        BufferedReader checkBr = new BufferedReader(new FileReader("Staff_List.csv"));
+        String line;
+        while ((line = checkBr.readLine()) != null) {
+            String[] staff = line.split(",");
+            if (staff[0].equals(staffID)) {
+                System.out.println("Error: Staff ID already exists.");
+                checkBr.close();
+                return;
+            }
+        }
+        checkBr.close();
+
+        System.out.print("Name: ");
+        String name = sc.nextLine();
+        
+        System.out.print("Role (Doctor/Pharmacist/Administrator): ");
+        String role = sc.nextLine();
+        
+        System.out.print("Gender (M/F): ");
+        String gender = sc.nextLine();
+        
+        System.out.print("Age: ");
+        String age = sc.nextLine();
+
+        // Append new staff member to file
+        FileWriter fw = new FileWriter("Staff_List.csv", true); // true for append mode
+        PrintWriter pw = new PrintWriter(fw);
+        pw.println(staffID + "," + name + "," + role + "," + gender + "," + age);
+        pw.close();
+        System.out.println("Staff member added successfully.");
+
+    } catch (IOException e) {
+        System.out.println("Error updating Staff_List.csv");
+    }
+}
+
+private void removeStaffMember() {
+    try {
+        System.out.print("Enter Staff ID to remove: ");
+        String staffID = sc.nextLine();
+
+        // Read all lines except the one to remove
+        ArrayList<String> lines = new ArrayList<>();
+        BufferedReader br = new BufferedReader(new FileReader("Staff_List.csv"));
+        String line;
+        boolean firstLine = true;
+        boolean found = false;
+        
+        while ((line = br.readLine()) != null) {
+            if (firstLine) {
+                lines.add(line);
+                firstLine = false;
+                continue;
+            }
+            String[] staff = line.split(",");
+            if (!staff[0].equals(staffID)) {
+                lines.add(line);
+            } else {
+                found = true;
+            }
+        }
+        br.close();
+
+        if (!found) {
+            System.out.println("Staff member not found.");
+            return;
+        }
+
+        // Write back all lines except the removed one
+        PrintWriter pw = new PrintWriter(new FileWriter("Staff_List.csv"));
+        for (String l : lines) {
+            pw.println(l);
+        }
+        pw.close();
+        System.out.println("Staff member removed successfully.");
+
+    } catch (IOException e) {
+        System.out.println("Error updating Staff_List.csv");
+    }
+}
+
+private void filterStaffList() {
+    System.out.println("Filter by:");
+    System.out.println("1. Role");
+    System.out.println("2. Gender");
+    System.out.println("3. Age");
+    int filterChoice = sc.nextInt();
+    sc.nextLine(); // Clear buffer
+
+    try {
+        BufferedReader br = new BufferedReader(new FileReader("Staff_List.csv"));
+        String line;
+        boolean firstLine = true;
+        boolean found = false;
 
         switch (filterChoice) {
             case 1:
                 System.out.println("Enter role (Doctor/Pharmacist/Administrator):");
                 String role = sc.nextLine();
-                for (User staff : staffList) {
-                    if (staff.getRole().equalsIgnoreCase(role)) {
-                        System.out.println("ID: " + staff.getHospitalID() + ", Role: " + staff.getRole());
+                System.out.println("\nStaff members with role " + role + ":");
+                System.out.println("Staff ID | Name | Role | Gender | Age");
+                System.out.println("----------------------------------------");
+                while ((line = br.readLine()) != null) {
+                    if (firstLine) {
+                        firstLine = false;
+                        continue;
+                    }
+                    String[] staff = line.split(",");
+                    if (staff[2].equalsIgnoreCase(role)) {
+                        System.out.println(staff[0] + " | " + staff[1] + " | " + staff[2] + " | " + staff[3] + " | " + staff[4]);
+                        found = true;
                     }
                 }
                 break;
-            // Add more filter cases as needed
+
+            case 2:
+                System.out.println("Enter gender (M/F):");
+                String gender = sc.nextLine();
+                System.out.println("\nStaff members with gender " + gender + ":");
+                System.out.println("Staff ID | Name | Role | Gender | Age");
+                System.out.println("----------------------------------------");
+                while ((line = br.readLine()) != null) {
+                    if (firstLine) {
+                        firstLine = false;
+                        continue;
+                    }
+                    String[] staff = line.split(",");
+                    if (staff[3].equalsIgnoreCase(gender)) {
+                        System.out.println(staff[0] + " | " + staff[1] + " | " + staff[2] + " | " + staff[3] + " | " + staff[4]);
+                        found = true;
+                    }
+                }
+                break;
+
+            case 3:
+                System.out.println("Enter minimum age:");
+                int minAge = sc.nextInt();
+                System.out.println("Enter maximum age:");
+                int maxAge = sc.nextInt();
+                System.out.println("\nStaff members between " + minAge + " and " + maxAge + " years:");
+                System.out.println("Staff ID | Name | Role | Gender | Age");
+                System.out.println("----------------------------------------");
+                while ((line = br.readLine()) != null) {
+                    if (firstLine) {
+                        firstLine = false;
+                        continue;
+                    }
+                    String[] staff = line.split(",");
+                    int age = Integer.parseInt(staff[4]);
+                    if (age >= minAge && age <= maxAge) {
+                        System.out.println(staff[0] + " | " + staff[1] + " | " + staff[2] + " | " + staff[3] + " | " + staff[4]);
+                        found = true;
+                    }
+                }
+                break;
+
             default:
                 System.out.println("Invalid filter option.");
         }
+
+        if (!found) {
+            System.out.println("No staff members found matching the criteria.");
+        }
+        br.close();
+
+    } catch (IOException e) {
+        System.out.println("Error reading Staff_List.csv");
     }
+}
 
     private void viewAppointmentsDetails() {
         System.out.println("Enter date (MM/DD):");
