@@ -9,7 +9,7 @@ public class Administrator extends User {
     }
 
     void showMenu() {
-        System.out.println("1. View and Manage Hospital Staff");
+        System.out.println("1. View and Manage Hospital Staff"); //checked
         System.out.println("2. View Appointments Details");
         System.out.println("3. View and Manage Medication Inventory");
         System.out.println("4. Approve Replenishment Requests");
@@ -185,7 +185,7 @@ private void removeStaffMember() {
         System.out.println("Error updating Staff_List.csv");
     }
 }
-
+//checked
 private void filterStaffList() {
     System.out.println("Filter by:");
     System.out.println("1. Role");
