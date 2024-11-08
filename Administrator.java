@@ -100,22 +100,36 @@ private void viewAllStaff() {
 //checked
 private void addStaffMember() {
     try {
+        // Read all data into memory
+        ArrayList<String[]> staffList = new ArrayList<>();
+        BufferedReader br = new BufferedReader(new FileReader("Staff_List.csv"));
+        String line;
+        boolean firstLine = true;
+        String header = "";
+        
+        while ((line = br.readLine()) != null) {
+            if (firstLine) {
+                header = line;
+                firstLine = false;
+                continue;
+            }
+            staffList.add(line.split(","));
+        }
+        br.close();
+
+        // Get new staff details
         System.out.println("\nEnter staff details:");
         System.out.print("Staff ID: ");
         String staffID = sc.nextLine();
         
-        // Check if ID already exists
-        BufferedReader checkBr = new BufferedReader(new FileReader("Staff_List.csv"));
-        String line;
-        while ((line = checkBr.readLine()) != null) {
-            String[] staff = line.split(",");
+        // Check if ID exists in the ArrayList
+        boolean exists = false;
+        for (String[] staff : staffList) {
             if (staff[0].equals(staffID)) {
                 System.out.println("Error: Staff ID already exists.");
-                checkBr.close();
                 return;
             }
         }
-        checkBr.close();
 
         System.out.print("Name: ");
         String name = sc.nextLine();
@@ -129,10 +143,16 @@ private void addStaffMember() {
         System.out.print("Age: ");
         String age = sc.nextLine();
 
-        // Append new staff member to file
-        FileWriter fw = new FileWriter("Staff_List.csv", true); // true for append mode
-        PrintWriter pw = new PrintWriter(fw);
-        pw.println(staffID + "," + name + "," + role + "," + gender + "," + age);
+        // Add new staff to ArrayList
+        String[] newStaff = {staffID, name, role, gender, age};
+        staffList.add(newStaff);
+
+        // Write all data back to file
+        PrintWriter pw = new PrintWriter(new FileWriter("Staff_List.csv"));
+        pw.println(header);
+        for (String[] staff : staffList) {
+            pw.println(String.join(",", staff));
+        }
         pw.close();
         System.out.println("Staff member added successfully.");
 
