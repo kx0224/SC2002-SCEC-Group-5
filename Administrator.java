@@ -75,7 +75,7 @@ private void manageHospitalStaff() {
         }
     }
 }
-//tested 
+//checked
 private void viewAllStaff() {
     try {
         BufferedReader br = new BufferedReader(new FileReader("Staff_List.csv"));
@@ -97,7 +97,7 @@ private void viewAllStaff() {
         System.out.println("Error reading Staff_List.csv");
     }
 }
-//tested
+//checked
 private void addStaffMember() {
     try {
         System.out.println("\nEnter staff details:");
@@ -140,7 +140,7 @@ private void addStaffMember() {
         System.out.println("Error updating Staff_List.csv");
     }
 }
-
+//checked
 private void removeStaffMember() {
     try {
         System.out.print("Enter Staff ID to remove: ");
