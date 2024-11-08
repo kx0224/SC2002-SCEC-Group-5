@@ -3,8 +3,6 @@ import java.io.*;
 
 public class Administrator extends User {
     private ArrayList<User> staffList = new ArrayList<>();
-    private HashMap<String, Medicine> medicineInventory;
-    private ArrayList<String> replenishmentRequests;
     Scanner sc = new Scanner(System.in);
 
     Administrator(String userID, String password, String name, String Role) {
