@@ -1,0 +1,189 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class Patient {
+    private String patientID;
+    private String name;
+    private String dob;
+    private String gender;
+    private String contactNumber;
+    private String email;
+    private String bloodType;
+    private List<String> medicalRecords;
+    private List<Appointment> appointments;
+
+    public Patient(String patientID, String name, String dob, String gender, String contactNumber, String email, String bloodType) {
+        this.patientID = patientID;
+        this.name = name;
+        this.dob = dob;
+        this.gender = gender;
+        this.contactNumber = contactNumber;
+        this.email = email;
+        this.bloodType = bloodType;
+        this.medicalRecords = new ArrayList<>();
+        this.appointments = new ArrayList<>();
+    }
+
+    public void viewMedicalRecord() {
+        System.out.println("Patient ID: " + patientID);
+        System.out.println("Name: " + name);
+        System.out.println("Date of Birth: " + dob);
+        System.out.println("Gender: " + gender);
+        System.out.println("Contact Number: " + contactNumber);
+        System.out.println("Email: " + email);
+        System.out.println("Blood Type: " + bloodType);
+        System.out.println("Medical History: " + medicalRecords);
+    }
+
+    public void updatePersonalInformation(String newEmail, String newContactNumber) {
+        this.email = newEmail;
+        this.contactNumber = newContactNumber;
+        System.out.println("Contact information updated successfully.");
+    }
+
+    public void viewAvailableAppointmentSlots() {
+        System.out.println("Available Appointment Slots:");
+        System.out.println("Dr. John - 2024-11-10 10:00 AM");
+        System.out.println("Dr. Smith - 2024-11-12 2:00 PM");
+    }
+
+    public void scheduleAppointment(String doctorID, String date, String time) {
+        Appointment newAppointment = new Appointment(doctorID, date, time, "confirmed");
+        appointments.add(newAppointment);
+        System.out.println("Appointment scheduled successfully with Doctor ID: " + doctorID);
+    }
+
+    public void rescheduleAppointment(int appointmentID, String newDate, String newTime) {
+        for (Appointment appointment : appointments) {
+            if (appointment.getId() == appointmentID) {
+                appointment.setDate(newDate);
+                appointment.setTime(newTime);
+                System.out.println("Appointment rescheduled to: " + newDate + " " + newTime);
+                return;
+            }
+        }
+        System.out.println("Appointment ID not found.");
+    }
+
+    public void cancelAppointment(int appointmentID) {
+        appointments.removeIf(appointment -> appointment.getId() == appointmentID);
+        System.out.println("Appointment canceled successfully.");
+    }
+
+    public void viewScheduledAppointments() {
+        System.out.println("Scheduled Appointments:");
+        for (Appointment appointment : appointments) {
+            System.out.println(appointment);
+        }
+    }
+
+    public void viewPastAppointmentOutcomes() {
+        System.out.println("Past Appointment Outcomes:");
+        for (Appointment appointment : appointments) {
+            if (appointment.isCompleted()) {
+                System.out.println(appointment.getOutcome());
+            }
+        }
+    }
+
+    public void addToMedicalRecord(String diagnosis) {
+        medicalRecords.add(diagnosis);
+    }
+
+    public static void main(String[] args) {
+        // Sample test for the Patient class
+        Patient patient = new Patient("P123", "Alice Johnson", "1990-05-20", "Female", "12345678", "alice@example.com", "O+");
+
+        // View Medical Record
+        patient.viewMedicalRecord();
+
+        // Update Personal Information
+        patient.updatePersonalInformation("alice.new@example.com", "87654321");
+
+        // View Available Appointment Slots
+        patient.viewAvailableAppointmentSlots();
+
+        // Schedule an Appointment
+        patient.scheduleAppointment("D001", "2024-11-10", "10:00 AM");
+
+        // View Scheduled Appointments
+        patient.viewScheduledAppointments();
+
+        // Reschedule an Appointment
+        patient.rescheduleAppointment(1, "2024-11-15", "11:00 AM");
+
+        // Cancel an Appointment
+        patient.cancelAppointment(1);
+
+        // View Scheduled Appointments after cancellation
+        patient.viewScheduledAppointments();
+    }
+}
+
+class Appointment {
+    private static int idCounter = 1;
+    private int id;
+    private String doctorID;
+    private String date;
+    private String time;
+    private String status;
+    private String outcome;
+
+    public Appointment(String doctorID, String date, String time, String status) {
+        this.id = idCounter++;
+        this.doctorID = doctorID;
+        this.date = date;
+        this.time = time;
+        this.status = status;
+        this.outcome = "";
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getDoctorID() {
+        return doctorID;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isCompleted() {
+        return "completed".equalsIgnoreCase(status);
+    }
+
+    public String getOutcome() {
+        return outcome;
+    }
+
+    public void setOutcome(String outcome) {
+        this.outcome = outcome;
+    }
+
+    @Override
+    public String toString() {
+        return "Appointment ID: " + id + ", Doctor ID: " + doctorID + ", Date: " + date + ", Time: " + time + ", Status: " + status;
+    }
+}
