@@ -324,7 +324,7 @@ private void filterStaffList() {
         }
     }
 }
-
+//checked
 private void viewInventory() {
     try {
         BufferedReader br = new BufferedReader(new FileReader("Medicine_List.csv"));
