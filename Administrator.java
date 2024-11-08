@@ -97,7 +97,7 @@ private void viewAllStaff() {
         System.out.println("Error reading Staff_List.csv");
     }
 }
-
+//tested
 private void addStaffMember() {
     try {
         System.out.println("\nEnter staff details:");
