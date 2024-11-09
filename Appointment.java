@@ -1,18 +1,34 @@
-import java.util.*;
-import java.io.*;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 public class Appointment{
     int timeslot;
     int[] datearray=new int[2]; 
-    boolean dateformatcheck=false;
     String pname;
-    String outcome;
+    String doctorname;
+    ArrayList<String> outcomemedications = new ArrayList<>();
+    ArrayList<Float> medicationquantity= new ArrayList<>();
+    String treatmentype;
+    String consultationnotes;
     int acceptedstatus;
-    Scanner sc=new Scanner(System.in);
-    Appointment(int ts, String ipdate, String pm){
+    Appointment(int ts, String ipdate, String pm, String dm){
         this.timeslot=ts;
         this.pname=pm;
         this.acceptedstatus=0;
-        this.outcome=null;
+        this.doctorname=dm;
+        this.treatmentype=null;
+        this.consultationnotes=pending;
+        this.datearray=datestringtoarray(ipdate);
+    }
+    Appointment(int ts, String ipdate, String pm,  ArrayList<String> meds, ArrayList<Double> medamt, String trtment, String cs, String dm, int as){
+        this.timeslot=ts;
+        this.pname=pm;
+        this.acceptedstatus=as;
+        this.outcomemedication=meds;
+        this.doctorname=dm;
+        this.medicationquantity=medamt;
+        this.treatmentype=trtment;
+        this.consultationnotes=cs;
         this.datearray=datestringtoarray(ipdate);
     }
     public int[] datestringtoarray(String dateString){
@@ -26,16 +42,22 @@ public class Appointment{
 
     public void showdetails(){
         System.out.println("------------------------");
-        System.out.println("Name:",pname);
+        System.out.println("Name:"+pname);
         System.out.printf("Date: %d/%d \n",datearray[0],datearray[1]);
-        System.out.println("Timeslot:",timeslot);
-        if (acceptedstatus==0) System.out.println("Pending acceptance");
+        System.out.println("Timeslot:"+timeslot);
+        if (acceptedstatus==0) {System.out.println("Pending acceptance"); return;}
         else if (acceptedstatus==1) System.out.println("Upcoming");
         else if (acceptedstatus==-1)System.out.println("Declined");
         else System.out.println("Completed");
-        if (outcome==null && acceptedstatus==0)System.out.println("Outcome: Pending completion");
-        else if (outcome==null && acceptedstatus==-1)System.out.println("Outcome: Appointment declined");
-        else System.out.println("Outcome:",outcome);
+        if (acceptedstatus==1)System.out.println("Outcome: Pending completion");
+        else if (acceptedstatus==-1)System.out.println("Outcome: Appointment declined");
+        else {
+            System.out.println("Medications issued:");
+            for (int i=0;i<outcomemedications.size();i++){
+                System.out.printf("%s  |  %d  g \n", outcomemedications.get(i), medicationquantity,get(i));
+            }
+            System.out.println("Treatment type:"+treatmentype);
+            System.out.println("Consultation notes: \n"+ consultationnotes);
     }
 
 }
