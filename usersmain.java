@@ -34,7 +34,7 @@ public class usersmain {
 	                    + "8. View Past Appointment Outcome Records\n"
 	                    + "9. Logout");
 		    				
-		    				Patient patient = new Patient(hospitalID, "", "", "", "", "", "");
+		    				Patient patient = new Patient(hospitalID, "", "", "", "", "");
 		    				
 		    				choice1 = in.nextInt();
 
