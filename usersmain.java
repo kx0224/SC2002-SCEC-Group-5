@@ -115,50 +115,6 @@ public class usersmain {
 		    				choice2 = in11.nextInt();
 		    				doctor.performAction(choice2);
 
-		    				
-//		    			    int choice2;
-//		    			    do {
-//		    			        System.out.println("Choose an option:\n"
-//		    			                + "1. View Patient Medical Records\n"
-//		    			                + "2. Update Patient Medical Records\n"
-//		    			                + "3. View Personal Schedule\n"
-//		    			                + "4. Set Availability for Appointments\n"
-//		    			                + "5. Accept or Decline Appointment Requests\n"
-//		    			                + "6. View Upcoming Appointments\n"
-//		    			                + "7. Record Appointment Outcome\n"
-//		    			                + "8. Logout");
-//		    			        choice2 = in.nextInt();
-//
-//		    			        switch (choice2) {
-//		    			            case 1:
-//		    			                System.out.println("Viewing Patient Medical Records...");
-//		    			                break;
-//		    			            case 2:
-//		    			                System.out.println("Updating Patient Medical Records...");
-//		    			                break;
-//		    			            case 3:
-//		    			                System.out.println("Viewing Personal Schedule...");
-//		    			                break;
-//		    			            case 4:
-//		    			                System.out.println("Setting Availability for Appointments...");
-//		    			                break;
-//		    			            case 5:
-//		    			                System.out.println("Accepting or Declining Appointment Requests...");
-//		    			                break;
-//		    			            case 6:
-//		    			                System.out.println("Viewing Upcoming Appointments...");
-//		    			                break;
-//		    			            case 7:
-//		    			                System.out.println("Recording Appointment Outcome...");
-//		    			                break;
-//		    			            case 8:
-//		    			                System.out.println("Logging out...");
-//		    			                return;  // Exit to main menu
-//		    			            default:
-//		    			                System.out.println("Invalid choice, please try again.");
-//		    			        }
-//		    			    } while (true);
-
 		    			}
 		    			
 		    			else if (role == "Pharmacist") {
@@ -170,36 +126,7 @@ public class usersmain {
 		    				pharmacist.performAction(choice3);
 		    			}
 		    				
-//		    				do {
-//		    			        System.out.println("Choose an option:\n"
-//		    			                + "1. View Appointment Outcome Record\n"
-//		    			                + "2. Update Prescription Status\n"
-//		    			                + "3. View Medication Inventory\n"
-//		    			                + "4. Submit Replenishment Request\n"
-//		    			                + "5. Logout");
-//		    			        choice3 = in.nextInt();
-//
-//		    			        switch (choice3) {
-//		    			            case 1:
-//		    			                System.out.println("Viewing Appointment Outcome Record...");
-//		    			                break;
-//		    			            case 2:
-//		    			                System.out.println("Updating Prescription Status...");
-//		    			                break;
-//		    			            case 3:
-//		    			                System.out.println("Viewing Medication Inventory...");
-//		    			                break;
-//		    			            case 4:
-//		    			                System.out.println("Submitting Replenishment Request...");
-//		    			                break;
-//		    			            case 5:
-//		    			                System.out.println("Logging out...");
-//		    			                return;  // Exit to main menu
-//		    			            default:
-//		    			                System.out.println("Invalid choice, please try again.");
-//		    			        }
-//		    			    } while (true);
-//		    			}
+
 		    			
 		    			else if (role == "Administrator") {
 		    				int choice4;
@@ -209,35 +136,6 @@ public class usersmain {
 		    				choice4 = in13.nextInt();
 		    				admin.performAction(choice4);
 		    			}
-//		    			    do {
-//		    			        System.out.println("Choose an option:\n"
-//		    			                + "1. View and Manage Hospital Staff\n"
-//		    			                + "2. View Appointments Details\n"
-//		    			                + "3. View and Manage Medication Inventory\n"
-//		    			                + "4. Approve Replenishment Requests\n"
-//		    			                + "5. Logout");
-//		    			        choice4 = in.nextInt();
-//
-//		    			        switch (choice4) {
-//		    			            case 1:
-//		    			                System.out.println("Viewing and Managing Hospital Staff...");
-//		    			                break;
-//		    			            case 2:
-//		    			                System.out.println("Viewing Appointments Details...");
-//		    			                break;
-//		    			            case 3:
-//		    			                System.out.println("Viewing and Managing Medication Inventory...");
-//		    			                break;
-//		    			            case 4:
-//		    			                System.out.println("Approving Replenishment Requests...");
-//		    			                break;
-//		    			            case 5:
-//		    			                System.out.println("Logging out...");
-//		    			                return;  // Exit to main menu
-//		    			            default:
-//		    			                System.out.println("Invalid choice, please try again.");
-//		    			        }
-//		    			    } while (true);
 		    			
 		    			
 		    		}
