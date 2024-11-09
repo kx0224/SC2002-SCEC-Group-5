@@ -20,7 +20,7 @@ public class Appointment{
         this.consultationnotes=pending;
         this.datearray=datestringtoarray(ipdate);
     }
-    Appointment(int ts, String ipdate, String pm,  ArrayList<String> meds, ArrayList<Double> medamt, String trtment, String cs, String dm, int as){
+    Appointment(int ts, String ipdate, String pm,  ArrayList<String> meds, ArrayList<Float> medamt, String trtment, String cs, String dm, int as){
         this.timeslot=ts;
         this.pname=pm;
         this.acceptedstatus=as;
@@ -60,4 +60,4 @@ public class Appointment{
             System.out.println("Consultation notes: \n"+ consultationnotes);
     }
 
-}
+}}
