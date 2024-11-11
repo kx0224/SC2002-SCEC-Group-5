@@ -17,11 +17,11 @@ public class Pharmacist extends User {
 
     @Override
     void showMenu() {
-        System.out.println("● View Appointment Outcome Record");
-        System.out.println("● Update Prescription Status");
-        System.out.println("● View Medication Inventory");
-        System.out.println("● Submit Replenishment Request");
-        System.out.println("● Logout");
+        System.out.println("1. View Appointment Outcome Record");
+        System.out.println("2. Update Prescription Status");
+        System.out.println("3. View Medication Inventory");
+        System.out.println("4. Submit Replenishment Request");
+        System.out.println("5. Logout");
     }
 
     @Override
