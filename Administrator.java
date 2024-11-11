@@ -366,7 +366,7 @@ private void viewInventory() {
         System.out.println("Error reading Medicine_List.csv");
     }
 }
-
+//checked
 private void updateStockLevel() {
     try {
         // First, read all data into memory
@@ -420,7 +420,7 @@ private void updateStockLevel() {
         System.out.println("Error updating Medicine_List.csv");
     }
 }
-
+//checked
 private void updateAlertLevel() {
     try {
         // First, read all data into memory
