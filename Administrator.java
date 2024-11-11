@@ -11,7 +11,7 @@ public class Administrator extends User {
     void showMenu() {
         System.out.println("1. View and Manage Hospital Staff"); //checked
         System.out.println("2. View Appointments Details");
-        System.out.println("3. View and Manage Medication Inventory");
+        System.out.println("3. View and Manage Medication Inventory");//checked
         System.out.println("4. Approve Replenishment Requests");
         System.out.println("5. Logout");
     }
