@@ -1,55 +1,49 @@
 package allusers;
 
 public class User {
+    private final String hospitalID;
+    private String password;
+    private final String role;
+    private boolean initialLogin;
 
-	
-	public User(String HospitalID, String Role) {
-		this.HospitalID = HospitalID;
-		this.Password = "password";
-		this.Role = Role;
-		this.InitialLogin = true;
-	}
-	
-	
-	private String HospitalID;
-	
-	private String Password;
-	
-	private String Role;
-	
-	private boolean InitialLogin;
-	
-	public boolean Checkpassword(String input) {
-		if (input.equals(Password)){
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	
-	public void changePassword(String password) {
-		this.Password = password;
-		this.InitialLogin = false;
-	}
-	
-	public boolean CheckID(String inputID) {
-		if (inputID.equals(HospitalID)) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	
-	public boolean checkInitialLogin() {
-		return this.InitialLogin;
-	}
-	
-	public String getRole() {
-		return this.Role;
-	}
+    public User(String hospitalID, String role) {
+        this.hospitalID = hospitalID;
+        this.password = "password"; // default password
+        this.role = role;
+        this.initialLogin = true;
+    }
 
+    public boolean validateLogin(String hospitalID, String password) {
+        return this.hospitalID.equals(hospitalID) && this.password.equals(password);
+    }
 
-	}
+    public void changePassword(String newPassword) {
+        if (isValidPassword(newPassword)) {
+            this.password = newPassword;
+            this.initialLogin = false;
+        } else {
+            throw new IllegalArgumentException("Password does not meet requirements.");
+        }
+    }
 
+    private boolean isValidPassword(String password) {
+        // Add password validation logic (e.g., length, complexity)
+        return password.length() >= 6;
+    }
+
+    public String getHospitalID() {
+        return hospitalID;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public boolean isInitialLogin() {
+        return initialLogin;
+    }
+
+    public boolean checkPassword(String inputPassword) {
+        return inputPassword.equals(password);
+    }
+}
