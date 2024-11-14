@@ -1,0 +1,3 @@
+HospitalID,Password,Name,Gender,Age,DateOfBirth,ContactInfo,BloodType,PastDiagnoses,Role
+P1002,securePass,Bob Smith,Male,45,1977-11-30,bob.smith@example.com,B+,Asthma,Patient
+P1003,myPassword123,Charlie White,Male,30,1992-01-25,charlie.white@example.com,O-,None,Patient

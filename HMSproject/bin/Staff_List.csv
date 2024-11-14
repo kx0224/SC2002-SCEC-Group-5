@@ -1,0 +1,5 @@
+HospitalID,Password,Name,Gender,Role,Age,Specialization
+D001,pass1234,John Smith,Male,Doctor,45,Cardiology
+D002,securePass,Emily Clarke,Female,Doctor,38,Neurology
+P001,pharmaPass,Mark Lee,Male,Pharmacist,29,
+A001,admin123,Sarah Lee,Female,Administrator,40,
