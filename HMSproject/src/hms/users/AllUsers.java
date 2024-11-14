@@ -32,19 +32,19 @@ public class AllUsers {
         String splitBy = ",";
 
         // Reading staff list
-        try (BufferedReader br = new BufferedReader(new FileReader("Staff_List.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\kexua\\Downloads\\Staff_List.csv"))) { //CHANGE TO UR OWN DIRECTORY
             br.readLine(); // Skip header line
             while ((line = br.readLine()) != null) {
                 String[] newuser = line.split(splitBy);
-                if (newuser.length >= 6) { // Ensure there are enough fields
+                if (newuser.length >= 4) { // Ensure there are enough fields
                     String hospitalID = newuser[0].trim();
-                    String password = newuser[1].trim();
-                    String name = newuser[2].trim();
+                    String password = "password";
+                    String name = newuser[1].trim();
+                    String role = newuser[2].trim();
                     String gender = newuser[3].trim();
-                    String role = newuser[4].trim();
                     int age;
                     try {
-                        age = Integer.parseInt(newuser[5].trim());
+                        age = Integer.parseInt(newuser[4].trim());
                     } catch (NumberFormatException e) {
                         System.out.println("Skipping line due to invalid age: " + line);
                         continue;
@@ -80,27 +80,20 @@ public class AllUsers {
         String splitBy = ",";
 
         // Reading patient list
-        try (BufferedReader br = new BufferedReader(new FileReader("Patient_List.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\kexua\\Downloads\\Patient_List.csv"))) { //CHANGE TO UR OWN DIRECTORY
             br.readLine(); // Skip header line
             while ((line = br.readLine()) != null) {
                 String[] newuser = line.split(splitBy);
-                if (newuser.length >= 10) { // Ensure there are enough fields
+                if (newuser.length >= 6) { // Ensure there are enough fields
                     String hospitalID = newuser[0].trim();
-                    String password = newuser[1].trim();
-                    String name = newuser[2].trim();
+                    String password = "password";
+                    String name = newuser[1].trim();
                     String gender = newuser[3].trim();
-                    int age;
-                    try {
-                        age = Integer.parseInt(newuser[4].trim());
-                    } catch (NumberFormatException e) {
-                        System.out.println("Skipping line due to invalid age: " + line);
-                        continue;
-                    }
-                    String dateOfBirth = newuser[5].trim();
-                    String contactInfo = newuser[6].trim();
-                    String bloodType = newuser[7].trim();
-                    String pastDiagnoses = newuser[8].trim();
-                    String role = newuser[9].trim();
+                    String dateOfBirth = newuser[2].trim();
+                    String contactInfo = newuser[5].trim();
+                    String bloodType = newuser[4].trim();
+                 //   String pastDiagnoses = newuser[8].trim();
+                    String role = "Patient";
 
                     // Ensure gender is correctly assigned
                     if (!gender.equalsIgnoreCase("Male") && !gender.equalsIgnoreCase("Female")) {
@@ -112,7 +105,7 @@ public class AllUsers {
                     gender = gender.substring(0, 1).toUpperCase() + gender.substring(1).toLowerCase();
 
                     // Create Patient instance
-                    Patient patient = new Patient(hospitalID, password, name, gender, role, age, dateOfBirth, contactInfo, bloodType, pastDiagnoses);
+                    Patient patient = new Patient(hospitalID, password, name, gender, role, 0, dateOfBirth, contactInfo, bloodType);
                     users.add(patient);
                 } else {
                     System.out.println("Skipping malformed line in Patient_List.csv: " + line);
