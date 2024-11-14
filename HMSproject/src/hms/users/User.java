@@ -12,7 +12,7 @@ public class User {
     // Constructor with the additional fields
     public User(String hospitalID, String password, String role, String name, String gender, int age) {
         this.hospitalID = hospitalID;
-        this.password = password;
+        this.password = "password";
         this.role = role;
         this.name = name;
         this.gender = gender;
