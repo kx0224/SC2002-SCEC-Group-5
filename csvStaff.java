@@ -12,7 +12,7 @@ public class csvStaff{
     ArrayList<String> rolelist=new ArrayList<>();
     ArrayList<Integer> Age=new ArrayList<>();
     ArrayList<String> staffID=new ArrayList<>();
-    ArrayList<Integer> Gender=new ArrayList<>();
+    ArrayList<String> Gender=new ArrayList<>();
     String Line=null;
     int i=0;
     public csvStaff(){
@@ -29,6 +29,7 @@ public class csvStaff{
             staffID.add(unparseddata[i][0]);
             nameStrings.add(unparseddata[i][1]);
             rolelist.add(unparseddata[i][2]);
+            Gender.add(unparseddata[i][3]);
             Age.add(Integer.parseInt(unparseddata[i][4]));
 
            }
@@ -40,7 +41,4 @@ public class csvStaff{
                e.printStackTrace();
            }
        }
-       public void updateCSV(){
-        //should I even continue? The admin class already has it covered
-       }
-}
+    }
