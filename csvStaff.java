@@ -13,6 +13,7 @@ public class csvStaff{
     ArrayList<Integer> Age=new ArrayList<>();
     ArrayList<String> staffID=new ArrayList<>();
     ArrayList<String> Gender=new ArrayList<>();
+    ArrayList<String> Passwordlist=new ArrayList<>();
     String Line=null;
     int i=0;
     public csvStaff(){
@@ -27,10 +28,11 @@ public class csvStaff{
            unparseddata=StaffList.toArray(new String[0][]);
            for (i=0;i<unparseddata.length;i++){
             staffID.add(unparseddata[i][0]);
-            nameStrings.add(unparseddata[i][1]);
-            rolelist.add(unparseddata[i][2]);
+            Passwordlist.add(unparseddata[i][1]);
+            nameStrings.add(unparseddata[i][2]);
+            rolelist.add(unparseddata[i][4]);
             Gender.add(unparseddata[i][3]);
-            Age.add(Integer.parseInt(unparseddata[i][4]));
+            Age.add(Integer.parseInt(unparseddata[i][5]));
 
            }
            
