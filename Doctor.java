@@ -1,17 +1,33 @@
 package sc2002.group5.oopprojectsrc;
 import java.util.*;
 public class Doctor extends User{
-    public ArrayList<Patient> patientList = new ArrayList<>();
+    private ArrayList<Appointment> AllAppointments=null;
     public ArrayList<Appointment> completedAppointments = new ArrayList<>();
     public ArrayList<Appointment> apptRequest = new ArrayList<>();
     public ArrayList<Appointment> declined = new ArrayList<>();
     private ArrayList<Appointment> Upcoming = new ArrayList<>();
     Scanner sc=new Scanner(System.in);
     csvPatient cPatient=new csvPatient();
+    String doctorname=null;
+    csvAppointment cAppointment=new csvAppointment();
+    csvStaff cStaff=new csvStaff();
+    int i=0;
+
     public String[][][] schedule= new String[12][31][10]; //Correspoding to month, day and slot respectively
     Doctor(String userm, String Password1, String hospID, String Role){
         super(userm,Password1,Role);
-        //import data? How would we approach this?
+        Appointment selectionA=null;
+        for (i=0;i<cStaff.staffID.size();i++){
+            if (this.getHospitalID().equalsIgnoreCase(cStaff.staffID.get(i))) {doctorname=cStaff.nameStrings.get(i); break;}
+        }
+        AllAppointments=cAppointment.getAppointmentdoctor(doctorname);
+        for (i=0;i<AllAppointments.size();i++){
+            selectionA=AllAppointments.get(i);
+            if (selectionA.acceptedstatus==0) apptRequest.add(selectionA);
+            else if (selectionA.acceptedstatus==1) Upcoming.add(selectionA);
+            else if (selectionA.acceptedstatus==-1) declined.add(selectionA);
+            else completedAppointments.add(selectionA);
+        }
         
         
     }
@@ -184,6 +200,7 @@ public class Doctor extends User{
 
     }}
     private void acceptOrDeclineAppointmentRequests(){
+        if (apptRequest.isEmpty()) {System.out.println("No appointment requests"); return;}
         int usagechoice=0;
         int selection=0;
         int k=0,m=0,d=0;
@@ -292,6 +309,7 @@ public class Doctor extends User{
         }
     }
     private void viewrequests(){
+        if (apptRequest.isEmpty()){System.out.println("No requests");return;}
         for (int i=0;i<Upcoming.size();i++) {
             apptRequest.get(i).showdetails();
             System.out.println("Index:"+i+1);
@@ -312,6 +330,7 @@ public class Doctor extends User{
         String medtype=null;
         boolean usage=true;
         Appointment selectedAppointment=null;
+        if (completedAppointments.isEmpty()){System.out.println("No completed appointments, nothing can be recorded"); return;}
         while (usage){
             System.out.println("Choose your option");
             System.out.println("1. View completed appointments");
