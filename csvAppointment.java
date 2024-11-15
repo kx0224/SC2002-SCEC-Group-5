@@ -71,12 +71,27 @@ public class csvAppointment{
            }
         
            }
-           public ArrayList<Appointment> getAppointment(String Doctorname){
+           public ArrayList<Appointment> getAppointmentdoctor(String Doctorname){
             ArrayList<Appointment> returnlist=new ArrayList<>();
             for (i=0;i<AppointmentList.size();i++){
                 if (Doctorname.equalsIgnoreCase(doctorname.get(i))){
-                    if (accpetedstatus.get(i).equals(0)){
-                        returnlist.add(new Appointment(timeslots.get(i), date.get(i), Patienttname.get(i), doctorname.get(i)));
+                    if (accpetedstatus.get(i).equals(0)| accpetedstatus.get(i).equals(1) | accpetedstatus.get(i).equals(-1)){
+                        returnlist.add(new Appointment(timeslots.get(i), date.get(i), Patienttname.get(i), doctorname.get(i), accpetedstatus.get(i)));
+                    }
+                    else{
+                        returnlist.add(new Appointment(timeslots.get(i), date.get(i), Patienttname.get(i), doctorname.get(i), outcomemedications.get(i), medicationquantity.get(i), treatment.get(i), noteList.get(i),accpetedstatus.get(i)));
+                    }                
+
+                }
+            }
+            return returnlist;
+           }
+           public ArrayList<Appointment> getAppointmentPatient(String PatientName){
+            ArrayList<Appointment> returnlist=new ArrayList<>();
+            for (i=0;i<AppointmentList.size();i++){
+                if (PatientName.equalsIgnoreCase(doctorname.get(i))){
+                    if (accpetedstatus.get(i).equals(0)| accpetedstatus.get(i).equals(1) | accpetedstatus.get(i).equals(-1)){
+                        returnlist.add(new Appointment(timeslots.get(i), date.get(i), Patienttname.get(i), doctorname.get(i), accpetedstatus.get(i)));
                     }
                     else{
                         returnlist.add(new Appointment(timeslots.get(i), date.get(i), Patienttname.get(i), doctorname.get(i), outcomemedications.get(i), medicationquantity.get(i), treatment.get(i), noteList.get(i),accpetedstatus.get(i)));
@@ -99,6 +114,52 @@ public class csvAppointment{
             treatment.add(null);
             noteList.add(null);
 
+            
+        }
+        public void CancelAppointment(Appointment A){
+            for (i=0;i<Indexes.size();i++){
+                if (A.doctorname.equalsIgnoreCase(doctorname.get(i))&&A.pname.equalsIgnoreCase(Patienttname.get(i))&&A.datearraytoString().equals(date.get(i))&&A.timeslot==timeslots.get(i)){
+                if (i==Indexes.size()){
+                    Indexes.remove(i);
+                    doctorname.remove(i);
+                    Patienttname.remove(i);
+                    date.remove(i);
+                    timeslots.remove(i);
+                    accpetedstatus.remove(i);
+                    outcomemedications.remove(i);
+                    medicationquantity.remove(i);
+                    treatment.remove(i);
+                    noteList.remove(i);
+                }
+                else {for (int j=i+1; j<Indexes.size();j++){
+                Indexes.set(j-1, Indexes.get(j));
+                doctorname.set(j-1, doctorname.get(j));
+                Patienttname.set(-1, Patienttname.get(j));
+                date.set(j-1, date.get(j));
+                timeslots.set(j-1, timeslots.get(j));
+                accpetedstatus.set(j-1, accpetedstatus.get(j));
+                outcomemedications.set(j-1, outcomemedications.get(j));
+                medicationquantity.set(j-1, medicationquantity.get(j));
+                treatment.set(j-1, treatment.get(j));
+                noteList.set(i, noteList.get(j));
+                }
+                i=Indexes.size();
+                Indexes.remove(i);
+                doctorname.remove(i);
+                Patienttname.remove(i);
+                date.remove(i);
+                timeslots.remove(i);
+                accpetedstatus.remove(i);
+                outcomemedications.remove(i);
+                medicationquantity.remove(i);
+                treatment.remove(i);
+                noteList.remove(i);
+
+
+            }
+                break;
+            }
+            }
         }
         public void updateAppointment(Appointment A){ //for completed appointments.
             for (i=0;i<Indexes.size();i++){
