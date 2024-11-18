@@ -101,8 +101,9 @@ public abstract class User {
     }
 
     public static boolean validatePhoneNumber(String phoneNumber) {
-        return phoneNumber.matches("^[0-9]{10,15}$"); // Allow only digits, between 10 to 15 characters
+        return phoneNumber.matches("^[0-9]{8}$"); // Allow only digits, exactly 8 characters
     }
+    
     
 
     public static boolean validateEmailAddress(String emailAddress) {

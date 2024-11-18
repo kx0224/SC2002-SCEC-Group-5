@@ -35,16 +35,35 @@ public class PatientMenu {
                     patientController.viewMedicalRecord();
                     break;
                 case 2:
-                    System.out.println("What would you like to update?");
-                    System.out.println("1. Phone Number (Format: 8 digits, no spaces or special characters)");
-                    System.out.println("2. Email Address (Format: example@example.com)");
-                    System.out.print("Enter your choice (1 or 2): ");
-                    int updateChoice = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
-                    System.out.print(updateChoice == 1 ? "Enter new phone number: " : "Enter new email address: ");
-                    String newValue = scanner.nextLine();
-                    patientController.updatePersonalInformation(updateChoice, newValue);
-                    
+                    boolean updateRunning = true;
+                    while (updateRunning) {
+                        System.out.println("What would you like to update?");
+                        System.out.println("1. Phone Number (Format: 8 digits, no spaces or special characters)");
+                        System.out.println("2. Email Address (Format: example@example.com)");
+                        System.out.println("3. Go back to Patient Dashboard");
+                        System.out.print("Enter your choice (1, 2, or 3): ");
+                        int updateChoice = scanner.nextInt();
+                        scanner.nextLine(); // Consume newline
+
+                        switch (updateChoice) {
+                            case 1:
+                                System.out.print("Enter new phone number: ");
+                                String newPhoneNumber = scanner.nextLine();
+                                patientController.updatePersonalInformation(updateChoice, newPhoneNumber);
+                                break;
+                            case 2:
+                                System.out.print("Enter new email address: ");
+                                String newEmail = scanner.nextLine();
+                                patientController.updatePersonalInformation(updateChoice, newEmail);
+                                break;
+                            case 3:
+                                updateRunning = false;
+                                break;
+                            default:
+                                System.out.println("Invalid choice. Please try again.");
+                                break;
+                        }
+                    }
                     break;
                 case 3:
                     patientController.viewAvailableAppointments();

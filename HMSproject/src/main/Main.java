@@ -8,6 +8,7 @@ import dao.AppointmentDAO;
 import dao.PatientDAO;
 import java.util.Scanner;
 import model.Patient;
+import model.Staff;
 import view.PatientMenu;
 
 public class Main {
@@ -15,72 +16,76 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         LoginController loginController = new LoginController();
 
-        System.out.println("Welcome to the Hospital Management System");
-        System.out.println("Please select your role:");
-        System.out.println("1. Patient");
-        System.out.println("2. Staff");
-        System.out.print("Enter your choice (1 or 2): ");
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        boolean exit = false;
+        while (!exit) {
+            System.out.println("Welcome to the Hospital Management System");
+            System.out.println("Please select your role:");
+            System.out.println("1. Patient");
+            System.out.println("2. Staff");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice (1, 2, or 3): ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
 
-        String identifier, password;
-        boolean authenticated = false;
-        String role = "none";
-        Patient authenticatedPatient = null;
+            String identifier, password;
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter your email or userID: ");
+                    identifier = scanner.nextLine();
+                    System.out.print("Enter your password: ");
+                    password = scanner.nextLine();
 
-        switch (choice) {
-            case 1:
-                System.out.print("Enter your email or userID: ");
-                identifier = scanner.nextLine();
-                System.out.print("Enter your password: ");
-                password = scanner.nextLine();
+                    Patient authenticatedPatient = loginController.authenticateAndGetPatient(identifier, password);
+                    if (authenticatedPatient != null) {
+                        System.out.println("Welcome to the Patient Dashboard!");
 
-                authenticatedPatient = loginController.authenticateAndGetPatient(identifier, password);
-                if (authenticatedPatient != null) {
-                    authenticated = true;
-                    role = "patient";
-                } else {
-                    role = "none";
-                }
-                break;
+                        PatientDAO patientDAO = new PatientDAO();
+                        AppointmentDAO appointmentDAO = new AppointmentDAO();
+                        MedicalRecordController medicalRecordController = new MedicalRecordController();
+                        AppointmentController appointmentController = new AppointmentController();
 
-            case 2:
-                System.out.print("Enter your staff ID or email: ");
-                identifier = scanner.nextLine();
-                System.out.print("Enter your password: ");
-                password = scanner.nextLine();
+                        PatientController patientController = new PatientController(authenticatedPatient, patientDAO, appointmentDAO, medicalRecordController, appointmentController);
+                        PatientMenu patientMenu = new PatientMenu(patientController);
+                        patientMenu.showMenu();
+                    } else {
+                        System.out.println("Login failed. Please try again.");
+                        System.out.println("Press 'M' to return to the main menu or any other key to retry login.");
+                        String response = scanner.nextLine();
+                        if (response.equalsIgnoreCase("M")) {
+                            continue;
+                        }
+                    }
+                    break;
 
-                role = loginController.authenticate(identifier, password);
-                authenticated = !role.equals("none");
-                break;
+                case 2:
+                    System.out.print("Enter your staff ID or email: ");
+                    identifier = scanner.nextLine();
+                    System.out.print("Enter your password: ");
+                    password = scanner.nextLine();
 
-            default:
-                System.out.println("Invalid choice. Exiting the system.");
-                System.exit(0);
-        }
+                    Staff authenticatedStaff = loginController.authenticateAndGetStaff(identifier, password);
+                    if (authenticatedStaff != null) {
+                        System.out.println("Welcome to the Staff Dashboard!");
+                        // Implement staff functionalities here based on roles (e.g., Doctor, Pharmacist)
+                    } else {
+                        System.out.println("Login failed. Please try again.");
+                        System.out.println("Press 'M' to return to the main menu or any other key to retry login.");
+                        String response = scanner.nextLine();
+                        if (response.equalsIgnoreCase("M")) {
+                            continue;
+                        }
+                    }
+                    break;
 
-        if (authenticated) {
-            if (role.equals("patient")) {
-                System.out.println("Welcome to the Patient Dashboard!");
+                case 3:
+                    exit = true;
+                    System.out.println("Thank you for using the Hospital Management System. Goodbye!");
+                    break;
 
-                // Assuming you can retrieve the Patient object after successful login
-                PatientDAO patientDAO = new PatientDAO();
-                AppointmentDAO appointmentDAO = new AppointmentDAO();
-                MedicalRecordController medicalRecordController = new MedicalRecordController();
-                AppointmentController appointmentController = new AppointmentController();
-
-                // Update the constructor call to match the defined constructor in PatientController
-                PatientController patientController = new PatientController(authenticatedPatient, patientDAO, appointmentDAO, medicalRecordController, appointmentController);
-
-                // Instantiate the PatientMenu and show the menu
-                PatientMenu patientMenu = new PatientMenu(patientController);
-                patientMenu.showMenu();
-            } else if (role.equals("staff")) {
-                System.out.println("Welcome to the Staff Dashboard!");
-                // Implement staff functionalities here based on roles (e.g., Doctor, Pharmacist)
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
             }
-        } else {
-            System.out.println("Login failed. Please try again.");
         }
 
         scanner.close();

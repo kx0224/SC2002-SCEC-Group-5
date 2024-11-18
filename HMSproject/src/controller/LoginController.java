@@ -40,8 +40,8 @@ public class LoginController {
         }
     }
 
-    // Authenticate staff using userID or email and password
-    public boolean authenticateStaff(String identifier, String password) {
+    // Authenticate staff using userID or email and password, return Staff object if successful
+    public Staff authenticateAndGetStaff(String identifier, String password) {
         List<Staff> staffList = staffDAO.getAllStaff();
 
         Staff staff = staffList.stream()
@@ -51,22 +51,26 @@ public class LoginController {
 
         if (staff != null) {
             System.out.println("Login successful. Welcome, " + staff.getName() + "!");
-            return true;
+            return staff;
         } else {
             System.out.println("Invalid email, userID, or password. Please try again.");
-            return false;
+            return null;
         }
     }
 
-    // Generic authentication method
-    public String authenticate(String identifier, String password) {
-        if (authenticateAndGetPatient(identifier, password) != null) {
-            return "patient";
-        } else if (authenticateStaff(identifier, password)) {
-            return "staff";
+    // Generic authentication method to determine the type of user (patient or staff)
+    public Object authenticate(String identifier, String password) {
+        Patient patient = authenticateAndGetPatient(identifier, password);
+        if (patient != null) {
+            return patient;
         } else {
-            System.out.println("Authentication failed. Invalid credentials.");
-            return "none";
+            Staff staff = authenticateAndGetStaff(identifier, password);
+            if (staff != null) {
+                return staff;
+            } else {
+                System.out.println("Authentication failed. Invalid credentials.");
+                return null;
+            }
         }
     }
 }
