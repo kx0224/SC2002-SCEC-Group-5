@@ -1,0 +1,16 @@
+staffID,name,role,department,gender,age,contactNumber,email,address,shift,emergencyContact,password
+DOC101,Dr. John Tan,Doctor,Cardiology,Male,45,+65 9123 4567,john.tan@sghealth.com,123 Ang Mo Kio Ave 3,Day,+65 9234 5678,password101
+DOC103,Dr. Jane Lim,Doctor,Pediatrics,Female,40,+65 9876 5432,jane.lim@sghealth.com,789 Bukit Timah Rd,Day,+65 9345 6789,password103
+DOC105,Dr. Michael Lee,Doctor,General,Male,50,+65 8123 4567,michael.lee@sghealth.com,456 Tampines Ave 9,Night,+65 9456 7890,password105
+DOC106,Dr. Sarah Ong,Doctor,Oncology,Female,38,+65 8765 4321,sarah.ong@sghealth.com,789 Clementi Rd,Day,+65 9654 3210,password106
+DOC107,Dr. Robert Chia,Doctor,Orthopedics,Male,42,+65 8345 6789,robert.chia@sghealth.com,321 Serangoon North Ave 1,Day,+65 9765 4321,password107
+DOC108,Dr. Emily Zhang,Doctor,General,Female,35,+65 9234 5678,emily.zhang@sghealth.com,654 Pasir Ris Dr 10,Night,+65 9456 1234,password108
+DOC109,Dr. James Ng,Doctor,Cardiology,Male,47,+65 9654 7890,james.ng@sghealth.com,789 Yishun Ave 11,Weekend,+65 9123 7890,password109
+DOC110,Dr. Priya Singh,Doctor,General,Female,41,+65 9456 7899,priya.singh@sghealth.com,123 Jurong West St 52,Day,+65 9345 8765,password110
+DOC111,Dr. Ahmed Khan,Doctor,General,Male,39,+65 8123 8901,ahmed.khan@sghealth.com,456 Woodlands Ave 1,Day,+65 9234 5671,password111
+DOC112,Dr. Rachel Teo,Doctor,General,Female,44,+65 8765 1234,rachel.teo@sghealth.com,789 Bedok North St 3,Night,+65 9876 5430,password112
+PHM201,Alex Tan,Pharmacist,Pharmacy,Male,30,+65 9234 8765,alex.tan@sghealth.com,321 Hougang Ave 8,Weekend,+65 9456 7893,password201
+PHM202,Emma Wong,Pharmacist,Pharmacy,Female,32,+65 9345 6789,emma.wong@sghealth.com,654 Choa Chu Kang Ave 4,Day,+65 9123 4567,password202
+PHM203,Liam Koh,Pharmacist,Pharmacy,Male,37,+65 9456 1234,liam.koh@sghealth.com,789 Bukit Batok West Ave 6,Night,+65 9654 3212,password203
+ADM301,John Lim,Administrator,Admin,Male,50,+65 9123 4567,john.lim@sghealth.com,123 Raffles Place,Day,+65 9234 8765,password301
+ADM302,Jane Tan,Administrator,Admin,Female,48,+65 9876 5432,jane.tan@sghealth.com,456 Marina Bay Sands,Day,+65 9345 6788,password302

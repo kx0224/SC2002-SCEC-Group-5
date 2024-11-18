@@ -1,0 +1,17 @@
+userID,bloodType,medicalHistory,diagnosis,treatment,prescription,quantity,comments
+P001,O+,Hypertension;Diabetes;Follow-up at Singapore General Hospital,Diabetes Management,Follow-up Visit,Metformin,30,Regular monitoring needed.
+P002,A-,Pregnancy Check-up;Gleneagles Hospital;Vitamin Deficiency,Pregnancy,Vitamins Supplementation,Prenatal Vitamins,60,Needs regular follow-up.
+P003,B+,Heart Bypass Surgery;National Heart Centre Singapore;Medication Review,Heart Condition,Medication Adjustment,Beta Blockers,20,Next review in 3 months.
+P004,AB+,Asthma;Annual Check-up;KK Women's and Children's Hospital,Asthma Management,Inhaler Use,Albuterol,10,Monitor breathing daily.
+P005,O-,Fractured Arm;Changi General Hospital;Physiotherapy Sessions,Bone Fracture,Physiotherapy,Pain Relief,15,Continue physiotherapy sessions.
+P006,B-,Cholesterol Management;Family Clinic Bedok;Dietary Recommendations,Cholesterol Management,Dietary Changes,Statins,25,Follow up with dietician.
+P007,A+,Migraine;Neurologist Appointment at Raffles Hospital,Migraine Control,Medication Evaluation,Sumatriptan,10,Report any side effects.
+P008,AB-,Diabetes;Consultation at Jurong Medical Centre;Eye Check-up,Diabetes Management,Consultation,Insulin,50,Annual eye check-up recommended.
+P009,O+,Sports Injury;National University Hospital;Physiotherapy,Sports Injury,Physiotherapy Treatment,Ibuprofen,20,Avoid strenuous activities.
+P010,B+,Kidney Stones;Urology Consultation at Mount Elizabeth Hospital,Kidney Stones,Urology Consultation,Potassium Citrate,15,Increase water intake.
+P011,A-,Seasonal Allergies;Family Clinic Tampines,Allergy Control,Antihistamines,Loratadine,10,Take as needed during allergy season.
+P012,AB+,Chronic Back Pain;Pain Management Clinic,Chronic Pain Management,Physical Therapy,Acetaminophen,30,Attend weekly therapy sessions.
+P013,O-,Gastric Ulcer;City Clinic;Diet Adjustment,Gastric Ulcer Management,Dietary Changes,Omeprazole,20,Reduce spicy food intake.
+P014,B-,Ear Infection;Polyclinic;Antibiotic Course,Ear Infection Treatment,Antibiotics,Amoxicillin,7,Complete full antibiotic course.
+P015,O+,Hypertension;Annual Check-up;Blood Pressure Monitoring,Hypertension Control,Medication Adjustment,Lisinopril,30,Check blood pressure weekly.
+
