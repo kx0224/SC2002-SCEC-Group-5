@@ -1,11 +1,6 @@
 staffID,name,dateOfBirth,role,department,gender,age,contactNumber,emailAddress,address,shift,emergencyContact,password
-DOC101,Dr. John Tan,1978-04-15,Doctor,Cardiology,Male,45,+65 9123 4567,john.tan@sghealth.com,123 Ang Mo Kio Ave 3,Day,+65 9234 5678,password101
-DOC103,Dr. Jane Lim,1983-05-10,Doctor,Pediatrics,Female,40,+65 9876 5432,jane.lim@sghealth.com,789 Bukit Timah Rd,Day,+65 9345 6789,password103
 DOC105,Dr. Michael Lee,1973-02-25,Doctor,General,Male,50,+65 8123 4567,michael.lee@sghealth.com,456 Tampines Ave 9,Night,+65 9456 7890,password105
-DOC106,Dr. Sarah Ong,1985-08-19,Doctor,Oncology,Female,38,+65 8765 4321,sarah.ong@sghealth.com,789 Clementi Rd,Day,+65 9654 3210,password106
-DOC107,Dr. Robert Chia,1981-11-23,Doctor,Orthopedics,Male,42,+65 8345 6789,robert.chia@sghealth.com,321 Serangoon North Ave 1,Day,+65 9765 4321,password107
 DOC108,Dr. Emily Zhang,1988-03-12,Doctor,General,Female,35,+65 9234 5678,emily.zhang@sghealth.com,654 Pasir Ris Dr 10,Night,+65 9456 1234,password108
-DOC109,Dr. James Ng,1976-07-21,Doctor,Cardiology,Male,47,+65 9654 7890,james.ng@sghealth.com,789 Yishun Ave 11,Weekend,+65 9123 7890,password109
 DOC110,Dr. Priya Singh,1982-09-30,Doctor,General,Female,41,+65 9456 7899,priya.singh@sghealth.com,123 Jurong West St 52,Day,+65 9345 8765,password110
 DOC111,Dr. Ahmed Khan,1984-03-15,Doctor,General,Male,39,+65 8123 8901,ahmed.khan@sghealth.com,456 Woodlands Ave 1,Day,+65 9234 5671,password111
 DOC112,Dr. Rachel Teo,1979-12-05,Doctor,General,Female,44,+65 8765 1234,rachel.teo@sghealth.com,789 Bedok North St 3,Night,+65 9876 5430,password112

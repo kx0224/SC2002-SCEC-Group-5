@@ -1,6 +1,9 @@
 package controller;
 
 import dao.AppointmentDAO;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -51,7 +54,56 @@ public class AppointmentController {
     public List<Appointment> getAppointmentsByDoctor(String doctorId) {
         return appointmentDAO.getAppointmentsByDoctor(doctorId);
     }
+    
+    // Method to view available appointment slots
+    public void viewAvailableAppointments() {
+        Scanner scanner = new Scanner(System.in);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate today = LocalDate.now();
 
+        // Display the next 7 days for selection
+        System.out.println("Please choose a date from the following options:");
+        for (int i = 0; i < 7; i++) {
+            LocalDate availableDate = today.plusDays(i);
+            System.out.println((i + 1) + ". " + availableDate.format(dateFormatter));
+        }
+        System.out.print("Enter the number corresponding to your chosen date: ");
+        int dateChoice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        if (dateChoice < 1 || dateChoice > 7) {
+            System.out.println("Invalid choice. Please try again.");
+            return;
+        }
+
+        LocalDate chosenDate = today.plusDays(dateChoice - 1);
+        String formattedDate = chosenDate.format(dateFormatter);
+
+        // Ask if the user wants to see a specific doctor
+        System.out.print("Do you want to see available slots for a specific doctor? (yes/no): ");
+        String doctorPreference = scanner.nextLine().trim().toLowerCase();
+
+        if (doctorPreference.equals("yes")) {
+            System.out.print("Enter Doctor Name or ID: ");
+            String doctorInput = scanner.nextLine();
+            List<String> availableSlots = getAvailableSlotsByDoctor(doctorInput, formattedDate);
+
+            if (availableSlots.isEmpty()) {
+                System.out.println("No available slots for the specified doctor on " + formattedDate);
+            } else {
+                System.out.println("Available slots for Doctor " + doctorInput + " on " + formattedDate + ":");
+                availableSlots.forEach(System.out::println);
+            }
+        } else {
+            List<String> availableSlots = getAvailableSlotsAcrossDoctors(formattedDate);
+            if (availableSlots.isEmpty()) {
+                System.out.println("No available slots on " + formattedDate);
+            } else {
+                System.out.println("Available slots on " + formattedDate + ":");
+                availableSlots.forEach(System.out::println);
+            }
+        }
+    }
     // Method to set availability for appointments
     @SuppressWarnings("LoggerStringConcat")
     public boolean setAvailability(String doctorId, String date, String timeSlot, boolean isAvailable) {

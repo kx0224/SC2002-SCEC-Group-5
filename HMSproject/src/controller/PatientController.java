@@ -129,7 +129,7 @@ public class PatientController {
         } else {
             System.out.println("Available Appointment Slots:");
             availableSlots.forEach(System.out::println);
-        }
+        }a
     }
 
     // Schedule a new appointment
