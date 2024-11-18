@@ -11,8 +11,8 @@ import model.Appointment.AppointmentStatus;
 
 public class AppointmentDAO {
     private static final Logger logger = Logger.getLogger(AppointmentDAO.class.getName());
-    private static final String APPOINTMENTS_FILE_PATH = "data/Appointment_List.csv";
-    private static final String AVAILABILITY_FILE_PATH = "data/DoctorAvailability.csv";
+    private static final String APPOINTMENTS_FILE_PATH = System.getProperty("user.dir") + "/src/data/Appointment_List.csv";
+    private static final String AVAILABILITY_FILE_PATH = System.getProperty("user.dir") + "/src/data/DoctorAvailability.csv";
 
     // Method to read appointments from CSV file
     public List<Appointment> readAppointmentsFromCSV() {

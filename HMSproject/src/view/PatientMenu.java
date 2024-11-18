@@ -1,9 +1,7 @@
 package view;
 
-import java.util.Scanner;
-
 import controller.PatientController;
-import model.Patient;
+import java.util.Scanner;
 
 public class PatientMenu {
     private PatientController patientController;
@@ -37,19 +35,42 @@ public class PatientMenu {
                     patientController.viewMedicalRecord();
                     break;
                 case 2:
-                    patientController.updatePersonalInformation();
+                    System.out.println("What would you like to update?");
+                    System.out.println("1. Phone Number (Format: 8 digits, no spaces or special characters)");
+                    System.out.println("2. Email Address (Format: example@example.com)");
+                    System.out.print("Enter your choice (1 or 2): ");
+                    int updateChoice = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
+                    System.out.print(updateChoice == 1 ? "Enter new phone number: " : "Enter new email address: ");
+                    String newValue = scanner.nextLine();
+                    patientController.updatePersonalInformation(updateChoice, newValue);
+                    
                     break;
                 case 3:
-                    patientController.viewAvailableAppointmentSlots();
+                    patientController.viewAvailableAppointments();
                     break;
                 case 4:
-                    patientController.scheduleAppointment();
+                    System.out.print("Enter Doctor ID: ");
+                    String doctorId = scanner.nextLine();
+                    System.out.print("Enter Date (Format: yyyy-mm-dd): ");
+                    String date = scanner.nextLine();
+                    System.out.print("Enter Time Slot (e.g., 10:00 AM - 11:00 AM): ");
+                    String timeSlot = scanner.nextLine();
+                    patientController.scheduleAppointment(doctorId, date, timeSlot);
                     break;
                 case 5:
-                    patientController.rescheduleAppointment();
+                    System.out.print("Enter Appointment ID: ");
+                    String appointmentId = scanner.nextLine();
+                    System.out.print("Enter new Date (Format: yyyy-mm-dd): ");
+                    String newDate = scanner.nextLine();
+                    System.out.print("Enter new Time Slot (e.g., 2:00 PM - 3:00 PM): ");
+                    String newTimeSlot = scanner.nextLine();
+                    patientController.rescheduleAppointment(appointmentId, newDate, newTimeSlot);
                     break;
                 case 6:
-                    patientController.cancelAppointment();
+                    System.out.print("Enter Appointment ID: ");
+                    String cancelAppointmentId = scanner.nextLine();
+                    patientController.cancelAppointment(cancelAppointmentId);
                     break;
                 case 7:
                     patientController.viewScheduledAppointments();

@@ -1,7 +1,14 @@
 package main;
 
+import controller.AppointmentController;
 import controller.LoginController;
+import controller.MedicalRecordController;
+import controller.PatientController;
+import dao.AppointmentDAO;
+import dao.PatientDAO;
 import java.util.Scanner;
+import model.Patient;
+import view.PatientMenu;
 
 public class Main {
     public static void main(String[] args) {
@@ -19,6 +26,7 @@ public class Main {
         String identifier, password;
         boolean authenticated = false;
         String role = "none";
+        Patient authenticatedPatient = null;
 
         switch (choice) {
             case 1:
@@ -27,8 +35,13 @@ public class Main {
                 System.out.print("Enter your password: ");
                 password = scanner.nextLine();
 
-                authenticated = loginController.authenticatePatient(identifier, password);
-                role = authenticated ? "patient" : "none";
+                authenticatedPatient = loginController.authenticateAndGetPatient(identifier, password);
+                if (authenticatedPatient != null) {
+                    authenticated = true;
+                    role = "patient";
+                } else {
+                    role = "none";
+                }
                 break;
 
             case 2:
@@ -49,15 +62,27 @@ public class Main {
         if (authenticated) {
             if (role.equals("patient")) {
                 System.out.println("Welcome to the Patient Dashboard!");
-                // Here, you can direct the user to specific patient functionalities
+
+                // Assuming you can retrieve the Patient object after successful login
+                PatientDAO patientDAO = new PatientDAO();
+                AppointmentDAO appointmentDAO = new AppointmentDAO();
+                MedicalRecordController medicalRecordController = new MedicalRecordController();
+                AppointmentController appointmentController = new AppointmentController();
+
+                // Update the constructor call to match the defined constructor in PatientController
+                PatientController patientController = new PatientController(authenticatedPatient, patientDAO, appointmentDAO, medicalRecordController, appointmentController);
+
+                // Instantiate the PatientMenu and show the menu
+                PatientMenu patientMenu = new PatientMenu(patientController);
+                patientMenu.showMenu();
             } else if (role.equals("staff")) {
                 System.out.println("Welcome to the Staff Dashboard!");
-                // Here, you can direct the user to specific staff functionalities (doctor, pharmacist, etc.)
+                // Implement staff functionalities here based on roles (e.g., Doctor, Pharmacist)
             }
         } else {
             System.out.println("Login failed. Please try again.");
         }
-        
+
         scanner.close();
     }
 }

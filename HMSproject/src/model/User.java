@@ -100,12 +100,12 @@ public abstract class User {
         return "Name: " + name + ", Date of Birth: " + dateOfBirth + ", Gender: " + gender + ", Phone Number: " + phoneNumber + ", Email Address: " + emailAddress;
     }
 
-    // Validation methods
-    private boolean validatePhoneNumber(String phoneNumber) {
-        return phoneNumber.matches("^\\+\\d{2}\\s\\d{4}\\s\\d{4}$"); // Updated regex for phone numbers with country code and space
+    public static boolean validatePhoneNumber(String phoneNumber) {
+        return phoneNumber.matches("^[0-9]{10,15}$"); // Allow only digits, between 10 to 15 characters
     }
+    
 
-    private boolean validateEmailAddress(String emailAddress) {
+    public static boolean validateEmailAddress(String emailAddress) {
         return emailAddress.matches("^[A-Za-z0-9+_.-]+@(.+)$"); // Basic email format validation
     }
 

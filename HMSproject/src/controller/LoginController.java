@@ -22,8 +22,8 @@ public class LoginController {
         this.staffDAO = staffDAO != null ? staffDAO : new StaffDAO();
     }
 
-    // Authenticate patient using email or userID and password
-    public boolean authenticatePatient(String identifier, String password) {
+    // Authenticate patient using email or userID and password, return Patient object if successful
+    public Patient authenticateAndGetPatient(String identifier, String password) {
         List<Patient> patients = patientDAO.getAllPatients();
 
         Patient patient = patients.stream()
@@ -33,10 +33,10 @@ public class LoginController {
 
         if (patient != null) {
             System.out.println("Login successful. Welcome, " + patient.getName() + "!");
-            return true;
+            return patient;
         } else {
             System.out.println("Invalid email, userID, or password. Please try again.");
-            return false;
+            return null;
         }
     }
 
@@ -60,7 +60,7 @@ public class LoginController {
 
     // Generic authentication method
     public String authenticate(String identifier, String password) {
-        if (authenticatePatient(identifier, password)) {
+        if (authenticateAndGetPatient(identifier, password) != null) {
             return "patient";
         } else if (authenticateStaff(identifier, password)) {
             return "staff";

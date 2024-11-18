@@ -7,7 +7,7 @@ import java.util.List;
 import model.MedicalRecord;
 
 public class MedicalRecordDAO {
-    private static final String MEDICAL_RECORDS_FILE = "MedicalRecords.csv";
+    private static final String MEDICAL_RECORDS_FILE = System.getProperty("user.dir") + "/src/data/MedicalRecords.csv";
 
     // Retrieve all medical records from the CSV file
     public List<MedicalRecord> getAllMedicalRecords() {

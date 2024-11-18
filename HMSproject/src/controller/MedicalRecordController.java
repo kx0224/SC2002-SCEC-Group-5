@@ -49,7 +49,7 @@ public class MedicalRecordController {
         }
 
         if (requesterID.equals(userID) || isDoctor(requesterID)) {
-            System.out.println("Medical record found: " + record);
+            
             return record;
         } else {
             System.err.println("Access Denied: You do not have permission to view this medical record.");

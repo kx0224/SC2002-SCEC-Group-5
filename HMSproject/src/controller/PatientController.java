@@ -3,49 +3,121 @@ package controller;
 import dao.AppointmentDAO;
 import dao.PatientDAO;
 import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
 import model.Appointment;
 import model.MedicalRecord;
 import model.Patient;
+import model.User;
 
 public class PatientController {
+
     private PatientDAO patientDAO;
     private AppointmentDAO appointmentDAO;
     private MedicalRecordController medicalRecordController;
     private AppointmentController appointmentController;
+    private Patient patient;
 
-    public PatientController() {
-        this.patientDAO = new PatientDAO();
-        this.appointmentDAO = new AppointmentDAO();
-        this.medicalRecordController = new MedicalRecordController();
-        this.appointmentController = new AppointmentController();
+    public PatientController(Patient patient, PatientDAO patientDAO, AppointmentDAO appointmentDAO, MedicalRecordController medicalRecordController, AppointmentController appointmentController) {
+        this.patient = patient;
+        this.patientDAO = patientDAO;
+        this.appointmentDAO = appointmentDAO;
+        this.medicalRecordController = medicalRecordController;
+        this.appointmentController = appointmentController;
     }
 
+    public Patient getPatient() {
+        return patient;
+    }
+    
     // View patient's own medical record
-    public void viewMedicalRecord(Patient patient) {
-        MedicalRecord record = medicalRecordController.viewMedicalRecord(patient.getUserId(), patient.getUserId());
-        if (record != null) {
-            System.out.println("Patient ID: " + record.getUserID());
-            System.out.println("Blood Type: " + record.getBloodType());
-            System.out.println("Medical History: " + (record.getMedicalHistory() != null ? String.join(", ", record.getMedicalHistory()) : "No medical history available"));
-            System.out.println("Diagnosis: " + record.getDiagnosis());
-            System.out.println("Treatment: " + record.getTreatment());
-            System.out.println("Prescription: " + record.getPrescription());
-            System.out.println("Quantity: " + record.getQuantity());
-            System.out.println("Comments: " + record.getComments());
-        } else {
-            System.out.println("No medical record available for User ID: " + patient.getUserId());
+    public void viewMedicalRecord() {
+        // Fetch the latest patient data from PatientDAO
+        Patient latestPatient = patientDAO.getPatientById(patient.getUserId());
+        MedicalRecord record = medicalRecordController.viewMedicalRecord(latestPatient.getUserId(), latestPatient.getUserId());
+        Optional.ofNullable(record).ifPresentOrElse(r -> {
+            System.out.println("Patient ID: " + latestPatient.getUserId());
+            System.out.println("Name: " + latestPatient.getName());
+            System.out.println("Date of Birth: " + latestPatient.getDateOfBirth());
+            System.out.println("Gender: " + latestPatient.getGender());
+            System.out.println("Contact Information: Phone - " + latestPatient.getPhoneNumber() + ", Email - " + latestPatient.getEmailAddress());
+            System.out.println("Blood Type: " + r.getBloodType());
+            System.out.println("Medical History: " + (r.getMedicalHistory() != null ? String.join(", ", r.getMedicalHistory()) : "No medical history available"));
+            System.out.println("Diagnosis: " + r.getDiagnosis());
+            System.out.println("Treatment: " + r.getTreatment());
+            System.out.println("Prescription: " + r.getPrescription());
+            System.out.println("Quantity: " + r.getQuantity());
+            System.out.println("Comments: " + r.getComments());
+        }, () -> System.out.println("No medical record available for User ID: " + latestPatient.getUserId()));
+        
+        // Provide option to go back to main menu
+        System.out.println("\nPress 'M' to return to the main menu.");
+        Scanner scanner = new Scanner(System.in);
+        String response = scanner.nextLine();
+        while (!response.equalsIgnoreCase("M")) {
+            System.out.println("Invalid input. Press 'M' to return to the main menu.");
+            response = scanner.nextLine();
         }
     }
 
-    // Update patient's personal information (e.g., phone number, email address)
-    public void updatePersonalInformation(Patient patient, String newPhoneNumber, String newEmailAddress) {
-        patient.setPhoneNumber(newPhoneNumber);
-        patient.setEmailAddress(newEmailAddress);
+    // Update patient's personal information (phone number or email address)
+    public void updatePersonalInformation(int choice, String value) {
+        Scanner scanner = new Scanner(System.in);
+        switch (choice) {
+            case 1:
+                boolean retry = true;
+                while (retry && !User.validatePhoneNumber(value)) {
+                    System.err.println("Invalid phone number format. Please enter exactly 8 digits.");
+                    System.out.print("Enter new phone number: ");
+                    value = scanner.nextLine();
+                    System.out.print("Would you like to try again or go back to the main menu? (try again: T / main menu: M): ");
+                    String response = scanner.nextLine();
+                    retry = response.equalsIgnoreCase("T");
+                    if (response.equalsIgnoreCase("M")) {
+                        return;
+                    }
+                }
+                System.out.println("Are you sure you want to update your phone number? (Y/N)");
+                if (!scanner.nextLine().equalsIgnoreCase("Y")) {
+                    System.out.println("Update canceled by user.");
+                    return;
+                }
+                patient.setPhoneNumber(value);
+                break;
+            case 2:
+                retry = true;
+                while (retry && !User.validateEmailAddress(value)) {
+                    System.err.println("Invalid email address format. Please enter a valid email (e.g., example@example.com).");
+                    System.out.print("Enter new email address: ");
+                    value = scanner.nextLine();
+                    System.out.print("Would you like to try again or go back to the main menu? (try again: T / main menu: M): ");
+                    String response = scanner.nextLine();
+                    retry = response.equalsIgnoreCase("T");
+                    if (response.equalsIgnoreCase("M")) {
+                        return;
+                    }
+                }
+                System.out.println("Are you sure you want to update your email address? (Y/N)");
+                if (!scanner.nextLine().equalsIgnoreCase("Y")) {
+                    System.out.println("Update canceled by user.");
+                    return;
+                }
+                patient.setEmailAddress(value);
+                break;
+            default:
+                System.err.println("Invalid choice. Update aborted.");
+                return;
+        }
         boolean success = patientDAO.updatePatient(patient);
+        printResult(success, "Personal information updated successfully.", "Error: Unable to update personal information.");
+    }
+
+    // Utility method to print result messages
+    private void printResult(boolean success, String successMessage, String errorMessage) {
         if (success) {
-            System.out.println("Personal information updated successfully.");
+            System.out.println(successMessage);
         } else {
-            System.out.println("Error: Unable to update personal information.");
+            System.out.println(errorMessage);
         }
     }
 
@@ -56,44 +128,30 @@ public class PatientController {
             System.out.println("No available appointment slots at the moment.");
         } else {
             System.out.println("Available Appointment Slots:");
-            for (String slot : availableSlots) {
-                System.out.println(slot);
-            }
+            availableSlots.forEach(System.out::println);
         }
     }
 
     // Schedule a new appointment
-    public void scheduleAppointment(Patient patient, String doctorId, String date, String timeSlot) {
+    public void scheduleAppointment(String doctorId, String date, String timeSlot) {
         boolean success = appointmentController.scheduleAppointment(doctorId, patient.getUserId(), date, timeSlot, "patient");
-        if (success) {
-            System.out.println("Appointment successfully scheduled.");
-        } else {
-            System.out.println("Error: Unable to schedule appointment. Please try another slot.");
-        }
+        printResult(success, "Appointment successfully scheduled.", "Error: Unable to schedule appointment. Please try another slot.");
     }
 
     // Reschedule an existing appointment
-    public void rescheduleAppointment(Patient patient, String appointmentId, String newDate, String newTimeSlot) {
+    public void rescheduleAppointment(String appointmentId, String newDate, String newTimeSlot) {
         boolean success = appointmentController.rescheduleAppointment(appointmentId, newDate, newTimeSlot, "patient");
-        if (success) {
-            System.out.println("Appointment successfully rescheduled.");
-        } else {
-            System.out.println("Error: Unable to reschedule appointment. Please try another slot.");
-        }
+        printResult(success, "Appointment successfully rescheduled.", "Error: Unable to reschedule appointment. Please try another slot.");
     }
 
     // Cancel an existing appointment
-    public void cancelAppointment(Patient patient, String appointmentId) {
+    public void cancelAppointment(String appointmentId) {
         boolean success = appointmentController.cancelAppointment(appointmentId, "patient");
-        if (success) {
-            System.out.println("Appointment successfully canceled.");
-        } else {
-            System.out.println("Error: Unable to cancel appointment.");
-        }
+        printResult(success, "Appointment successfully canceled.", "Error: Unable to cancel appointment.");
     }
 
     // View patient's scheduled appointments
-    public void viewScheduledAppointments(Patient patient) {
+    public void viewScheduledAppointments() {
         List<Appointment> scheduledAppointments = appointmentController.getScheduledAppointmentsByPatient(patient.getUserId());
         if (scheduledAppointments.isEmpty()) {
             System.out.println("No scheduled appointments.");
@@ -106,7 +164,7 @@ public class PatientController {
     }
 
     // View patient's past appointment outcomes
-    public void viewPastAppointmentOutcomes(Patient patient) {
+    public void viewPastAppointmentOutcomes() {
         List<Appointment> pastAppointments = appointmentController.getPastAppointmentOutcomesByPatient(patient.getUserId());
         if (pastAppointments.isEmpty()) {
             System.out.println("No past appointment records available.");
