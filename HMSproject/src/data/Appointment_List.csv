@@ -1,5 +1,1 @@
-AppointmentID,DoctorID,PatientID,Date,TimeSlot,Status,Outcome
-APT001,DR001,PT001,2024-12-01,09:00-09:30,SCHEDULED,
-APT002,DR002,PT002,2024-12-01,10:00-10:30,CONFIRMED,
-APT003,DR001,PT003,2024-12-01,11:00-11:30,PENDING,
-
+AppointmentID,DoctorID,PatientID,Date,TimeSlot,Status,ServiceProvided,PrescribedMedications,ConsultationNotes

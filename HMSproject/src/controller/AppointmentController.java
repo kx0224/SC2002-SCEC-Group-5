@@ -1,7 +1,6 @@
 package controller;
 
 import dao.AppointmentDAO;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -54,7 +53,7 @@ public class AppointmentController {
     public List<Appointment> getAppointmentsByDoctor(String doctorId) {
         return appointmentDAO.getAppointmentsByDoctor(doctorId);
     }
-    
+
     // Method to view available appointment slots
     public void viewAvailableAppointments() {
         Scanner scanner = new Scanner(System.in);
@@ -79,36 +78,20 @@ public class AppointmentController {
         LocalDate chosenDate = today.plusDays(dateChoice - 1);
         String formattedDate = chosenDate.format(dateFormatter);
 
-        // Ask if the user wants to see a specific doctor
-        System.out.print("Do you want to see available slots for a specific doctor? (yes/no): ");
-        String doctorPreference = scanner.nextLine().trim().toLowerCase();
-
-        if (doctorPreference.equals("yes")) {
-            System.out.print("Enter Doctor Name or ID: ");
-            String doctorInput = scanner.nextLine();
-            List<String> availableSlots = getAvailableSlotsByDoctor(doctorInput, formattedDate);
-
-            if (availableSlots.isEmpty()) {
-                System.out.println("No available slots for the specified doctor on " + formattedDate);
-            } else {
-                System.out.println("Available slots for Doctor " + doctorInput + " on " + formattedDate + ":");
-                availableSlots.forEach(System.out::println);
-            }
+        List<String> availableSlots = getAvailableSlotsAcrossDoctors(formattedDate);
+        if (availableSlots.isEmpty()) {
+            System.out.println("No available appointment slots on " + formattedDate);
         } else {
-            List<String> availableSlots = getAvailableSlotsAcrossDoctors(formattedDate);
-            if (availableSlots.isEmpty()) {
-                System.out.println("No available slots on " + formattedDate);
-            } else {
-                System.out.println("Available slots on " + formattedDate + ":");
-                availableSlots.forEach(System.out::println);
-            }
+            System.out.println("Available Appointment Slots on " + formattedDate + ":");
+            availableSlots.forEach(System.out::println);
         }
     }
+
     // Method to set availability for appointments
     @SuppressWarnings("LoggerStringConcat")
     public boolean setAvailability(String doctorId, String date, String timeSlot, boolean isAvailable) {
         try {
-            appointmentDAO.updateDoctorAvailability(doctorId, date, timeSlot, isAvailable);
+            appointmentDAO.updateAppointmentAvailability(doctorId, date, timeSlot, isAvailable);
             logger.log(Level.INFO, "Availability set for Doctor ID: " + doctorId + " on " + date + " with time slot: " + timeSlot);
             return true;
         } catch (Exception e) {
@@ -118,7 +101,7 @@ public class AppointmentController {
     }
 
     // Method to get available appointment slots for a doctor
-    public List<String> getAvailableSlots(String doctorId, String date) {
+    public List<String> getAvailableSlotsByDoctor(String doctorId, String date) {
         return appointmentDAO.getAvailableSlotsByDoctorAndDate(doctorId, date);
     }
 
@@ -146,21 +129,22 @@ public class AppointmentController {
     // Method to record appointment outcome
     @SuppressWarnings("LoggerStringConcat")
     public boolean recordAppointmentOutcome(String appointmentId, String role) {
-    if (role.equalsIgnoreCase("doctor")) {
-        AppointmentOutcome outcome = collectAppointmentOutcome();
-        
-        boolean isUpdated = appointmentDAO.updateAppointmentOutcome(appointmentId, outcome);
-        if (isUpdated) {
-            logger.log(Level.INFO, "Appointment outcome recorded for Appointment ID: " + appointmentId);
+        if (role.equalsIgnoreCase("doctor")) {
+            AppointmentOutcome outcome = collectAppointmentOutcome();
+
+            boolean isUpdated = appointmentDAO.updateAppointmentOutcome(appointmentId, outcome);
+            if (isUpdated) {
+                logger.log(Level.INFO, "Appointment outcome recorded for Appointment ID: " + appointmentId);
+            } else {
+                logger.log(Level.WARNING, "Appointment ID not found or invalid status transition for Appointment ID: " + appointmentId);
+            }
+            return isUpdated;
         } else {
-            logger.log(Level.WARNING, "Appointment ID not found or invalid status transition for Appointment ID: " + appointmentId);
+            logger.log(Level.WARNING, "Unauthorized role attempting to record appointment outcome: " + role);
+            return false;
         }
-        return isUpdated;
-    } else {
-        logger.log(Level.WARNING, "Unauthorized role attempting to record appointment outcome: " + role);
-        return false;
     }
-}
+
     private AppointmentOutcome collectAppointmentOutcome() {
         try (Scanner scanner = new Scanner(System.in)) {
             System.out.print("Enter service provided: ");
@@ -198,13 +182,11 @@ public class AppointmentController {
         }
     }
 
-
     // This method simulates generating or retrieving a medication ID based on the name
     private String generateMedicationId(String medicationName) {
         // This is a placeholder; replace with actual logic to fetch or create medication IDs
         return "MED" + medicationName.hashCode();
     }
-
 
     // Method to get all appointment outcomes
     public List<Appointment> getAllAppointmentOutcomes() {
@@ -297,5 +279,4 @@ public class AppointmentController {
             return new ArrayList<>();
         }
     }
-    
 }

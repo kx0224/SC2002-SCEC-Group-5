@@ -2,6 +2,7 @@ package model;
 
 import controller.AppointmentController;
 import controller.MedicalRecordController;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;

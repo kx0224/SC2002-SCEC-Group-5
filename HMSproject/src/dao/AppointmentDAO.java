@@ -12,7 +12,6 @@ import model.Appointment.AppointmentStatus;
 public class AppointmentDAO {
     private static final Logger logger = Logger.getLogger(AppointmentDAO.class.getName());
     private static final String APPOINTMENTS_FILE_PATH = System.getProperty("user.dir") + "/src/data/Appointment_List.csv";
-    private static final String AVAILABILITY_FILE_PATH = System.getProperty("user.dir") + "/src/data/DoctorAvailability.csv";
 
     // Method to read appointments from CSV file
     public List<Appointment> readAppointmentsFromCSV() {
@@ -22,7 +21,7 @@ public class AppointmentDAO {
             br.readLine(); // Skip header row
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data.length < 6) {
+                if (data.length < 8) {
                     logger.log(Level.WARNING, "Invalid data format. Skipping line: {0}", line);
                     continue;
                 }
@@ -32,8 +31,9 @@ public class AppointmentDAO {
                 String date = data[3];
                 String timeSlot = data[4];
                 AppointmentStatus status = AppointmentStatus.valueOf(data[5].toUpperCase());
-                AppointmentOutcome outcome = data.length > 6 ? new AppointmentOutcome(data[6], List.of(), data.length > 7 ? data[7] : "") : null;
-                appointments.add(new Appointment(appointmentId, doctorId, patientId, date, timeSlot, status, outcome));
+                boolean isAvailable = Boolean.parseBoolean(data[6]);
+                AppointmentOutcome outcome = data.length > 7 ? new AppointmentOutcome(data[7], List.of(), data.length > 8 ? data[8] : "") : null;
+                appointments.add(new Appointment(appointmentId, doctorId, patientId, date, timeSlot, status, isAvailable, outcome));
             }
         } catch (IOException | IllegalArgumentException e) {
             logger.log(Level.SEVERE, "Error reading appointments from CSV: {0}", e.getMessage());
@@ -44,7 +44,7 @@ public class AppointmentDAO {
     // Method to update appointments in CSV file
     public void updateAppointmentsInCSV(List<Appointment> appointments) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(APPOINTMENTS_FILE_PATH))) {
-            bw.write("AppointmentID,DoctorID,PatientID,Date,TimeSlot,Status,Outcome");
+            bw.write("AppointmentID,DoctorID,PatientID,Date,TimeSlot,Status,isAvailable,Outcome");
             bw.newLine();
             for (Appointment appointment : appointments) {
                 bw.write(appointment.toCSV());
@@ -55,52 +55,14 @@ public class AppointmentDAO {
         }
     }
 
-    // Method to update doctor availability in CSV file
-    @SuppressWarnings("UnnecessaryContinue")
-    public void updateDoctorAvailability(String doctorId, String date, String timeSlot, boolean isAvailable) {
-        List<String> availabilityData = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(AVAILABILITY_FILE_PATH))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length == 3 && data[0].equalsIgnoreCase(doctorId) && data[1].equals(date) && data[2].equals(timeSlot)) {
-                    if (!isAvailable) {
-                        continue; // Remove availability if no longer available
-                    }
-                } else {
-                    availabilityData.add(line);
-                }
-            }
-            if (isAvailable) {
-                availabilityData.add(doctorId + "," + date + "," + timeSlot);
-            }
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error reading doctor availability from CSV: {0}", e.getMessage());
-        }
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(AVAILABILITY_FILE_PATH))) {
-            for (String availability : availabilityData) {
-                bw.write(availability);
-                bw.newLine();
-            }
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error updating doctor availability in CSV: {0}", e.getMessage());
-        }
-    }
-
     // Method to get available slots by doctor and date
     public List<String> getAvailableSlotsByDoctorAndDate(String doctorId, String date) {
         List<String> availableSlots = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(AVAILABILITY_FILE_PATH))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length == 3 && data[0].equalsIgnoreCase(doctorId) && data[1].equals(date)) {
-                    availableSlots.add(data[2]);
-                }
+        List<Appointment> appointments = readAppointmentsFromCSV();
+        for (Appointment appointment : appointments) {
+            if (appointment.getDoctorId().equalsIgnoreCase(doctorId) && appointment.getDate().equals(date) && appointment.isAvailable()) {
+                availableSlots.add(appointment.getTimeSlot());
             }
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error reading doctor availability from CSV: {0}", e.getMessage());
         }
         return availableSlots;
     }
@@ -108,59 +70,13 @@ public class AppointmentDAO {
     // Method to get available slots across all doctors by date
     public List<String> getAvailableSlotsByDate(String date) {
         List<String> availableSlots = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(AVAILABILITY_FILE_PATH))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length == 3 && data[1].equals(date)) {
-                    availableSlots.add(data[0] + " - " + data[2]);
-                }
+        List<Appointment> appointments = readAppointmentsFromCSV();
+        for (Appointment appointment : appointments) {
+            if (appointment.getDate().equals(date) && appointment.isAvailable()) {
+                availableSlots.add(appointment.getDoctorId() + " - " + appointment.getTimeSlot());
             }
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error reading doctor availability from CSV: {0}", e.getMessage());
         }
         return availableSlots;
-    }
-
-    // Method to get all scheduled appointments
-    public List<Appointment> getAllAppointments() {
-        return readAppointmentsFromCSV();
-    }
-
-    // Method to get appointments by doctor ID
-    public List<Appointment> getAppointmentsByDoctor(String doctorId) {
-        List<Appointment> appointments = readAppointmentsFromCSV();
-        List<Appointment> doctorAppointments = new ArrayList<>();
-        for (Appointment appointment : appointments) {
-            if (appointment.getDoctorId().equalsIgnoreCase(doctorId)) {
-                doctorAppointments.add(appointment);
-            }
-        }
-        return doctorAppointments;
-    }
-
-    // Method to get pending appointments for a doctor
-    public List<Appointment> getPendingAppointments(String doctorId) {
-        List<Appointment> appointments = readAppointmentsFromCSV();
-        List<Appointment> pendingAppointments = new ArrayList<>();
-        for (Appointment appointment : appointments) {
-            if (appointment.getDoctorId().equalsIgnoreCase(doctorId) && appointment.getStatus() == AppointmentStatus.PENDING) {
-                pendingAppointments.add(appointment);
-            }
-        }
-        return pendingAppointments;
-    }
-
-    // Method to get confirmed appointments by doctor ID
-    public List<Appointment> getConfirmedAppointmentsByDoctor(String doctorId) {
-        List<Appointment> appointments = readAppointmentsFromCSV();
-        List<Appointment> confirmedAppointments = new ArrayList<>();
-        for (Appointment appointment : appointments) {
-            if (appointment.getDoctorId().equalsIgnoreCase(doctorId) && appointment.getStatus() == AppointmentStatus.CONFIRMED) {
-                confirmedAppointments.add(appointment);
-            }
-        }
-        return confirmedAppointments;
     }
 
     // Method to update appointment status
@@ -170,12 +86,12 @@ public class AppointmentDAO {
             if (appointment.getAppointmentId().equalsIgnoreCase(appointmentId)) {
                 try {
                     appointment.setStatus(status);
+                    appointment.setAvailable(status == AppointmentStatus.CANCELED);
                 } catch (IllegalArgumentException e) {
                     logger.log(Level.WARNING, "Invalid status transition: {0}", e.getMessage());
                     return false;
                 }
                 updateAppointmentsInCSV(appointments);
-                updateDoctorAvailability(appointment.getDoctorId(), appointment.getDate(), appointment.getTimeSlot(), status == AppointmentStatus.CANCELED);
                 return true;
             }
         }
@@ -195,41 +111,29 @@ public class AppointmentDAO {
                     return false;
                 }
                 updateAppointmentsInCSV(appointments);
-                updateDoctorAvailability(appointment.getDoctorId(), appointment.getDate(), appointment.getTimeSlot(), true);
                 return true;
             }
         }
         return false;
     }
 
-    // Method to approve appointment
-    public boolean approveAppointment(String appointmentId) {
-        return updateAppointmentStatus(appointmentId, AppointmentStatus.CONFIRMED);
-    }
-
-    // Method to decline appointment
-    public boolean declineAppointment(String appointmentId) {
-        return updateAppointmentStatus(appointmentId, AppointmentStatus.CANCELED);
-    }
-
     // Method to schedule a new appointment
-       // Method to schedule a new appointment
     public boolean scheduleAppointment(String doctorId, String patientId, String date, String timeSlot) {
         List<Appointment> appointments = readAppointmentsFromCSV();
         for (Appointment appointment : appointments) {
             if (appointment.getDoctorId().equals(doctorId) && appointment.getDate().equals(date) &&
-                appointment.getTimeSlot().equals(timeSlot) && appointment.getStatus() == AppointmentStatus.SCHEDULED) {
+                appointment.getTimeSlot().equals(timeSlot) && !appointment.isAvailable()) {
                 logger.log(Level.WARNING, "The selected time slot is already taken. Please choose a different slot.");
                 return false;
             }
         }
         String appointmentId = Appointment.generateUniqueAppointmentId(appointments.size());
-        Appointment newAppointment = new Appointment(appointmentId, doctorId, patientId, date, timeSlot, AppointmentStatus.SCHEDULED);
+        Appointment newAppointment = new Appointment(appointmentId, doctorId, patientId, date, timeSlot, AppointmentStatus.SCHEDULED, false);
         appointments.add(newAppointment);
         updateAppointmentsInCSV(appointments);
-        updateDoctorAvailability(doctorId, date, timeSlot, false);
         return true;
     }
+
     // Method to reschedule an appointment
     public boolean rescheduleAppointment(String appointmentId, String newDate, String newTimeSlot) {
         List<Appointment> appointments = readAppointmentsFromCSV();
@@ -239,16 +143,16 @@ public class AppointmentDAO {
                     if (otherAppointment.getDoctorId().equals(appointment.getDoctorId()) &&
                         otherAppointment.getDate().equals(newDate) &&
                         otherAppointment.getTimeSlot().equals(newTimeSlot) &&
-                        otherAppointment.getStatus() == AppointmentStatus.SCHEDULED) {
+                        !otherAppointment.isAvailable()) {
                         logger.log(Level.WARNING, "The selected new time slot is already taken. Please choose a different slot.");
                         return false;
                     }
                 }
-                updateDoctorAvailability(appointment.getDoctorId(), appointment.getDate(), appointment.getTimeSlot(), true);
+                appointment.setAvailable(true);
                 appointment.setDate(newDate);
                 appointment.setTimeSlot(newTimeSlot);
+                appointment.setAvailable(false);
                 updateAppointmentsInCSV(appointments);
-                updateDoctorAvailability(appointment.getDoctorId(), newDate, newTimeSlot, false);
                 return true;
             }
         }
@@ -278,7 +182,8 @@ public class AppointmentDAO {
         }
         return pastAppointments;
     }
-    
+
+    // Method to get appointments with prescribed medications for pharmacists
     public List<Appointment> getAppointmentsWithMedications() {
         List<Appointment> appointments = readAppointmentsFromCSV();
         List<Appointment> appointmentsWithMedications = new ArrayList<>();
@@ -289,5 +194,4 @@ public class AppointmentDAO {
         }
         return appointmentsWithMedications;
     }
-    
 }

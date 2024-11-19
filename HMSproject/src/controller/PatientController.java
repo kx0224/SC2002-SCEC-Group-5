@@ -65,14 +65,21 @@ public class PatientController {
         Scanner scanner = new Scanner(System.in);
         switch (choice) {
             case 1:
-                boolean retry = true;
-                while (retry && !User.validatePhoneNumber(value)) {
+                boolean validPhoneNumber = false;
+                while (!validPhoneNumber) {
+                    if (User.validatePhoneNumber(value)) {
+                        validPhoneNumber = true;
+                        break;  // Exit loop since the phone number is now valid
+                    }
                     System.err.println("Invalid phone number format. Please enter exactly 8 digits.");
                     System.out.print("Enter new phone number: ");
                     value = scanner.nextLine();
+                    if (User.validatePhoneNumber(value)) {
+                        validPhoneNumber = true;
+                        break;
+                    }
                     System.out.print("Would you like to try again or go back to the main menu? (try again: T / main menu: M): ");
                     String response = scanner.nextLine();
-                    retry = response.equalsIgnoreCase("T");
                     if (response.equalsIgnoreCase("M")) {
                         return;
                     }
@@ -85,14 +92,21 @@ public class PatientController {
                 patient.setPhoneNumber(value);
                 break;
             case 2:
-                retry = true;
-                while (retry && !User.validateEmailAddress(value)) {
+                boolean validEmail = false;
+                while (!validEmail) {
+                    if (User.validateEmailAddress(value)) {
+                        validEmail = true;
+                        break;  // Exit loop since the email address is now valid
+                    }
                     System.err.println("Invalid email address format. Please enter a valid email (e.g., example@example.com).");
                     System.out.print("Enter new email address: ");
                     value = scanner.nextLine();
+                    if (User.validateEmailAddress(value)) {
+                        validEmail = true;
+                        break;
+                    }
                     System.out.print("Would you like to try again or go back to the main menu? (try again: T / main menu: M): ");
                     String response = scanner.nextLine();
-                    retry = response.equalsIgnoreCase("T");
                     if (response.equalsIgnoreCase("M")) {
                         return;
                     }
@@ -123,13 +137,7 @@ public class PatientController {
 
     // View available appointment slots
     public void viewAvailableAppointments() {
-        List<String> availableSlots = appointmentController.getAvailableSlotsAcrossDoctors(null);
-        if (availableSlots.isEmpty()) {
-            System.out.println("No available appointment slots at the moment.");
-        } else {
-            System.out.println("Available Appointment Slots:");
-            availableSlots.forEach(System.out::println);
-        }a
+        appointmentController.viewAvailableAppointments();
     }
 
     // Schedule a new appointment

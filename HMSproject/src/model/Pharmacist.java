@@ -3,6 +3,7 @@ package model;
 import controller.AppointmentController;
 import controller.InventoryController;
 import controller.PrescriptionController;
+
 import java.util.List;
 import java.util.Scanner;
 

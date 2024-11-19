@@ -55,27 +55,30 @@ public class Appointment {
     private String date;
     private String timeSlot;
     private AppointmentStatus status;
+    private boolean isAvailable;
     private AppointmentOutcome outcome;
 
     // Constructor
-    public Appointment(String appointmentId, String doctorId, String patientId, String date, String timeSlot, AppointmentStatus status) {
+    public Appointment(String appointmentId, String doctorId, String patientId, String date, String timeSlot, AppointmentStatus status, boolean isAvailable) {
         this.appointmentId = appointmentId;
         this.doctorId = doctorId;
         this.patientId = patientId;
         this.date = date;
         this.timeSlot = timeSlot;
         this.status = status;
+        this.isAvailable = isAvailable;
         this.outcome = null;
     }
 
     // Overloaded constructor with outcome parameter
-    public Appointment(String appointmentId, String doctorId, String patientId, String date, String timeSlot, AppointmentStatus status, AppointmentOutcome outcome) {
+    public Appointment(String appointmentId, String doctorId, String patientId, String date, String timeSlot, AppointmentStatus status, boolean isAvailable, AppointmentOutcome outcome) {
         this.appointmentId = appointmentId;
         this.doctorId = doctorId;
         this.patientId = patientId;
         this.date = date;
         this.timeSlot = timeSlot;
         this.status = status;
+        this.isAvailable = isAvailable;
         this.outcome = outcome;
     }
 
@@ -132,6 +135,14 @@ public class Appointment {
         }
     }
 
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
+
     public AppointmentOutcome getOutcome() {
         return outcome;
     }
@@ -146,7 +157,7 @@ public class Appointment {
     // Method to convert appointment to CSV format
     public String toCSV() {
         String outcomeString = (outcome == null) ? "" : "\"" + outcome.getServiceProvided() + "\",\"" + String.join(",", outcome.getPrescribedMedications()) + "\",\"" + outcome.getConsultationNotes() + "\"";
-        return String.join(",", appointmentId, doctorId, patientId, date, timeSlot, status.name(), outcomeString);
+        return String.join(",", appointmentId, doctorId, patientId, date, timeSlot, status.name(), String.valueOf(isAvailable), outcomeString);
     }
 
     // Method to generate a unique appointment ID
@@ -165,6 +176,7 @@ public class Appointment {
             default -> false;
         };
     }
+
     public String getOutcomeSummary() {
         if (outcome == null) {
             return "No outcome available for this appointment.";
@@ -175,5 +187,4 @@ public class Appointment {
         summary.append("Consultation Notes: ").append(outcome.getConsultationNotes()).append("\n");
         return summary.toString();
     }
-    
 }
