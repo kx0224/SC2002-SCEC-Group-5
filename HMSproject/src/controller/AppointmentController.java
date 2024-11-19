@@ -1,11 +1,7 @@
 package controller;
 
 import dao.AppointmentDAO;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Appointment;
@@ -23,7 +19,6 @@ public class AppointmentController {
     }
 
     // Method to decline an appointment
-    @SuppressWarnings("LoggerStringConcat")
     public boolean declineAppointment(String appointmentId, String role) {
         if (role.equalsIgnoreCase("doctor")) {
             boolean isDeclined = appointmentDAO.updateAppointmentStatus(appointmentId, AppointmentStatus.CANCELED);
@@ -54,41 +49,7 @@ public class AppointmentController {
         return appointmentDAO.getAppointmentsByDoctor(doctorId);
     }
 
-    // Method to view available appointment slots
-    public void viewAvailableAppointments() {
-        Scanner scanner = new Scanner(System.in);
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate today = LocalDate.now();
-
-        // Display the next 7 days for selection
-        System.out.println("Please choose a date from the following options:");
-        for (int i = 0; i < 7; i++) {
-            LocalDate availableDate = today.plusDays(i);
-            System.out.println((i + 1) + ". " + availableDate.format(dateFormatter));
-        }
-        System.out.print("Enter the number corresponding to your chosen date: ");
-        int dateChoice = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-
-        if (dateChoice < 1 || dateChoice > 7) {
-            System.out.println("Invalid choice. Please try again.");
-            return;
-        }
-
-        LocalDate chosenDate = today.plusDays(dateChoice - 1);
-        String formattedDate = chosenDate.format(dateFormatter);
-
-        List<String> availableSlots = getAvailableSlotsAcrossDoctors(formattedDate);
-        if (availableSlots.isEmpty()) {
-            System.out.println("No available appointment slots on " + formattedDate);
-        } else {
-            System.out.println("Available Appointment Slots on " + formattedDate + ":");
-            availableSlots.forEach(System.out::println);
-        }
-    }
-
     // Method to set availability for appointments
-    @SuppressWarnings("LoggerStringConcat")
     public boolean setAvailability(String doctorId, String date, String timeSlot, boolean isAvailable) {
         try {
             appointmentDAO.updateAppointmentAvailability(doctorId, date, timeSlot, isAvailable);
@@ -127,10 +88,10 @@ public class AppointmentController {
     }
 
     // Method to record appointment outcome
-    @SuppressWarnings("LoggerStringConcat")
-    public boolean recordAppointmentOutcome(String appointmentId, String role) {
+    public boolean recordAppointmentOutcome(String appointmentId, String role, String serviceProvided, List<Medicine> prescribedMedications, String consultationNotes) {
         if (role.equalsIgnoreCase("doctor")) {
-            AppointmentOutcome outcome = collectAppointmentOutcome();
+            List<String> medicationNames = prescribedMedications.stream().map(Medicine::getName).toList();
+            AppointmentOutcome outcome = new AppointmentOutcome(serviceProvided, medicationNames, consultationNotes);
 
             boolean isUpdated = appointmentDAO.updateAppointmentOutcome(appointmentId, outcome);
             if (isUpdated) {
@@ -145,56 +106,12 @@ public class AppointmentController {
         }
     }
 
-    private AppointmentOutcome collectAppointmentOutcome() {
-        try (Scanner scanner = new Scanner(System.in)) {
-            System.out.print("Enter service provided: ");
-            String serviceProvided = scanner.nextLine();
-
-            List<Medicine> prescribedMedications = new ArrayList<>();
-            System.out.print("Enter number of medications prescribed: ");
-            int numMedications = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            for (int i = 0; i < numMedications; i++) {
-                System.out.print("Enter Medication Name: ");
-                String name = scanner.nextLine();
-                System.out.print("Enter Dosage: ");
-                String dosage = scanner.nextLine();
-                System.out.print("Enter Quantity: ");
-                int quantity = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
-
-                // Assuming a system function to create or fetch a medication ID based on the name
-                String medicationId = generateMedicationId(name);
-                Medicine medicine = new Medicine(medicationId, name, dosage, quantity, 0, false, ""); // Adjust as necessary
-                prescribedMedications.add(medicine);
-            }
-
-            // Convert List<Medicine> to List<String> (extracting names or other desired fields)
-            List<String> medicationNames = prescribedMedications.stream()
-                    .map(Medicine::getName)
-                    .toList();
-
-            System.out.print("Enter consultation notes: ");
-            String consultationNotes = scanner.nextLine();
-
-            return new Appointment.AppointmentOutcome(serviceProvided, medicationNames, consultationNotes);
-        }
-    }
-
-    // This method simulates generating or retrieving a medication ID based on the name
-    private String generateMedicationId(String medicationName) {
-        // This is a placeholder; replace with actual logic to fetch or create medication IDs
-        return "MED" + medicationName.hashCode();
-    }
-
     // Method to get all appointment outcomes
     public List<Appointment> getAllAppointmentOutcomes() {
         return appointmentDAO.getAllAppointments();
     }
 
     // Method to schedule a new appointment
-    @SuppressWarnings("LoggerStringConcat")
     public boolean scheduleAppointment(String doctorId, String patientId, String date, String timeSlot, String role) {
         if (role.equalsIgnoreCase("patient")) {
             boolean isScheduled = appointmentDAO.scheduleAppointment(doctorId, patientId, date, timeSlot);
@@ -227,7 +144,6 @@ public class AppointmentController {
     }
 
     // Method to reschedule an appointment
-    @SuppressWarnings("LoggerStringConcat")
     public boolean rescheduleAppointment(String appointmentId, String newDate, String newTimeSlot, String role) {
         if (role.equalsIgnoreCase("patient")) {
             boolean isRescheduled = appointmentDAO.rescheduleAppointment(appointmentId, newDate, newTimeSlot);
@@ -244,7 +160,6 @@ public class AppointmentController {
     }
 
     // Method to approve appointment
-    @SuppressWarnings("LoggerStringConcat")
     public boolean approveAppointment(String appointmentId, String role) {
         if (role.equalsIgnoreCase("doctor")) {
             boolean isApproved = appointmentDAO.updateAppointmentStatus(appointmentId, AppointmentStatus.CONFIRMED);

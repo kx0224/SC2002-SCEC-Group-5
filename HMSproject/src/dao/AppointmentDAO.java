@@ -3,6 +3,7 @@ package dao;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Appointment;
@@ -25,17 +26,21 @@ public class AppointmentDAO {
                     logger.log(Level.WARNING, "Invalid data format. Skipping line: {0}", line);
                     continue;
                 }
-                String appointmentId = data[0];
-                String doctorId = data[1];
-                String patientId = data[2];
-                String date = data[3];
-                String timeSlot = data[4];
-                AppointmentStatus status = AppointmentStatus.valueOf(data[5].toUpperCase());
-                boolean isAvailable = Boolean.parseBoolean(data[6]);
-                AppointmentOutcome outcome = data.length > 7 ? new AppointmentOutcome(data[7], List.of(), data.length > 8 ? data[8] : "") : null;
-                appointments.add(new Appointment(appointmentId, doctorId, patientId, date, timeSlot, status, isAvailable, outcome));
+                try {
+                    String appointmentId = data[0];
+                    String doctorId = data[1];
+                    String patientId = data[2];
+                    String date = data[3];
+                    String timeSlot = data[4];
+                    AppointmentStatus status = AppointmentStatus.valueOf(data[5].toUpperCase());
+                    boolean isAvailable = Boolean.parseBoolean(data[6]);
+                    AppointmentOutcome outcome = data.length > 7 ? new AppointmentOutcome(data[7], List.of(), data.length > 8 ? data[8] : "") : null;
+                    appointments.add(new Appointment(appointmentId, doctorId, patientId, date, timeSlot, status, isAvailable, outcome));
+                } catch (IllegalArgumentException e) {
+                    logger.log(Level.WARNING, "Invalid data format or value in line: {0}. Error: {1}", new Object[]{line, e.getMessage()});
+                }
             }
-        } catch (IOException | IllegalArgumentException e) {
+        } catch (IOException e) {
             logger.log(Level.SEVERE, "Error reading appointments from CSV: {0}", e.getMessage());
         }
         return appointments;
@@ -84,16 +89,28 @@ public class AppointmentDAO {
         List<Appointment> appointments = readAppointmentsFromCSV();
         for (Appointment appointment : appointments) {
             if (appointment.getAppointmentId().equalsIgnoreCase(appointmentId)) {
-                try {
+                if (isValidStatusTransition(appointment.getStatus(), status)) {
                     appointment.setStatus(status);
                     appointment.setAvailable(status == AppointmentStatus.CANCELED);
-                } catch (IllegalArgumentException e) {
-                    logger.log(Level.WARNING, "Invalid status transition: {0}", e.getMessage());
+                    updateAppointmentsInCSV(appointments);
+                    return true;
+                } else {
+                    logger.log(Level.WARNING, "Invalid status transition from {0} to {1} for Appointment ID: {2}", new Object[]{appointment.getStatus(), status, appointmentId});
                     return false;
                 }
-                updateAppointmentsInCSV(appointments);
-                return true;
             }
+        }
+        return false;
+    }
+
+    // Method to validate status transition
+    private boolean isValidStatusTransition(AppointmentStatus currentStatus, AppointmentStatus newStatus) {
+        // Add logic to validate the allowed status transitions
+        if (currentStatus == AppointmentStatus.SCHEDULED && (newStatus == AppointmentStatus.CANCELED || newStatus == AppointmentStatus.CONFIRMED || newStatus == AppointmentStatus.COMPLETED)) {
+            return true;
+        }
+        if (currentStatus == AppointmentStatus.CONFIRMED && newStatus == AppointmentStatus.COMPLETED) {
+            return true;
         }
         return false;
     }
@@ -103,15 +120,15 @@ public class AppointmentDAO {
         List<Appointment> appointments = readAppointmentsFromCSV();
         for (Appointment appointment : appointments) {
             if (appointment.getAppointmentId().equalsIgnoreCase(appointmentId)) {
-                appointment.setOutcome(outcome);
-                try {
+                if (isValidStatusTransition(appointment.getStatus(), AppointmentStatus.COMPLETED)) {
+                    appointment.setOutcome(outcome);
                     appointment.setStatus(AppointmentStatus.COMPLETED);
-                } catch (IllegalArgumentException e) {
-                    logger.log(Level.WARNING, "Invalid status transition: {0}", e.getMessage());
+                    updateAppointmentsInCSV(appointments);
+                    return true;
+                } else {
+                    logger.log(Level.WARNING, "Invalid status transition to COMPLETED for Appointment ID: {0}", appointmentId);
                     return false;
                 }
-                updateAppointmentsInCSV(appointments);
-                return true;
             }
         }
         return false;
@@ -121,13 +138,12 @@ public class AppointmentDAO {
     public boolean scheduleAppointment(String doctorId, String patientId, String date, String timeSlot) {
         List<Appointment> appointments = readAppointmentsFromCSV();
         for (Appointment appointment : appointments) {
-            if (appointment.getDoctorId().equals(doctorId) && appointment.getDate().equals(date) &&
-                appointment.getTimeSlot().equals(timeSlot) && !appointment.isAvailable()) {
+            if (appointment.getDoctorId().equals(doctorId) && appointment.getDate().equals(date) && appointment.getTimeSlot().equals(timeSlot) && !appointment.isAvailable()) {
                 logger.log(Level.WARNING, "The selected time slot is already taken. Please choose a different slot.");
                 return false;
             }
         }
-        String appointmentId = Appointment.generateUniqueAppointmentId(appointments.size());
+        String appointmentId = UUID.randomUUID().toString();
         Appointment newAppointment = new Appointment(appointmentId, doctorId, patientId, date, timeSlot, AppointmentStatus.SCHEDULED, false);
         appointments.add(newAppointment);
         updateAppointmentsInCSV(appointments);
@@ -140,10 +156,7 @@ public class AppointmentDAO {
         for (Appointment appointment : appointments) {
             if (appointment.getAppointmentId().equalsIgnoreCase(appointmentId) && appointment.getStatus() == AppointmentStatus.SCHEDULED) {
                 for (Appointment otherAppointment : appointments) {
-                    if (otherAppointment.getDoctorId().equals(appointment.getDoctorId()) &&
-                        otherAppointment.getDate().equals(newDate) &&
-                        otherAppointment.getTimeSlot().equals(newTimeSlot) &&
-                        !otherAppointment.isAvailable()) {
+                    if (otherAppointment.getDoctorId().equals(appointment.getDoctorId()) && otherAppointment.getDate().equals(newDate) && otherAppointment.getTimeSlot().equals(newTimeSlot) && !otherAppointment.isAvailable()) {
                         logger.log(Level.WARNING, "The selected new time slot is already taken. Please choose a different slot.");
                         return false;
                     }

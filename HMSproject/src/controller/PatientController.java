@@ -2,6 +2,7 @@ package controller;
 
 import dao.AppointmentDAO;
 import dao.PatientDAO;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -51,79 +52,97 @@ public class PatientController {
         }, () -> System.out.println("No medical record available for User ID: " + latestPatient.getUserId()));
         
         // Provide option to go back to main menu
-        System.out.println("\nPress 'M' to return to the main menu.");
-        Scanner scanner = new Scanner(System.in);
-        String response = scanner.nextLine();
-        while (!response.equalsIgnoreCase("M")) {
-            System.out.println("Invalid input. Press 'M' to return to the main menu.");
-            response = scanner.nextLine();
-        }
+        goBackToMainMenu();
     }
 
     // Update patient's personal information (phone number or email address)
-    public void updatePersonalInformation(int choice, String value) {
+    public void updatePersonalInformation() {
         Scanner scanner = new Scanner(System.in);
+        int choice = -1;
+        boolean validChoice = false;
+
+        while (!validChoice) {
+            System.out.println("What information would you like to update?");
+            System.out.println("1. Phone Number");
+            System.out.println("2. Email Address");
+            System.out.println("3. Go back to main menu");
+            System.out.print("Enter your choice: ");
+            try {
+                choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                if (choice >= 1 && choice <= 3) {
+                    validChoice = true;
+                } else {
+                    System.out.println("Invalid choice. Please enter a number between 1 and 3.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a number between 1 and 3.");
+                scanner.nextLine(); // Consume invalid input
+            }
+        }
+
         switch (choice) {
             case 1:
                 boolean validPhoneNumber = false;
+                String phoneNumber = "";
                 while (!validPhoneNumber) {
-                    if (User.validatePhoneNumber(value)) {
+                    System.out.print("Enter new phone number (8 digits): ");
+                    phoneNumber = scanner.nextLine();
+                    if (User.validatePhoneNumber(phoneNumber)) {
                         validPhoneNumber = true;
-                        break;  // Exit loop since the phone number is now valid
-                    }
-                    System.err.println("Invalid phone number format. Please enter exactly 8 digits.");
-                    System.out.print("Enter new phone number: ");
-                    value = scanner.nextLine();
-                    if (User.validatePhoneNumber(value)) {
-                        validPhoneNumber = true;
-                        break;
-                    }
-                    System.out.print("Would you like to try again or go back to the main menu? (try again: T / main menu: M): ");
-                    String response = scanner.nextLine();
-                    if (response.equalsIgnoreCase("M")) {
-                        return;
+                    } else {
+                        System.err.println("Invalid phone number format. Please enter exactly 8 digits.");
+                        System.out.print("Would you like to try again or go back to the main menu? (try again: T / main menu: M): ");
+                        String response = scanner.nextLine();
+                        if (response.equalsIgnoreCase("M")) {
+                            return;
+                        }
                     }
                 }
                 System.out.println("Are you sure you want to update your phone number? (Y/N)");
                 if (!scanner.nextLine().equalsIgnoreCase("Y")) {
                     System.out.println("Update canceled by user.");
+                    goBackToMainMenu();
                     return;
                 }
-                patient.setPhoneNumber(value);
+                patient.setPhoneNumber(phoneNumber);
                 break;
             case 2:
                 boolean validEmail = false;
+                String emailAddress = "";
                 while (!validEmail) {
-                    if (User.validateEmailAddress(value)) {
-                        validEmail = true;
-                        break;  // Exit loop since the email address is now valid
-                    }
-                    System.err.println("Invalid email address format. Please enter a valid email (e.g., example@example.com).");
                     System.out.print("Enter new email address: ");
-                    value = scanner.nextLine();
-                    if (User.validateEmailAddress(value)) {
+                    emailAddress = scanner.nextLine();
+                    if (User.validateEmailAddress(emailAddress)) {
                         validEmail = true;
-                        break;
-                    }
-                    System.out.print("Would you like to try again or go back to the main menu? (try again: T / main menu: M): ");
-                    String response = scanner.nextLine();
-                    if (response.equalsIgnoreCase("M")) {
-                        return;
+                    } else {
+                        System.err.println("Invalid email address format. Please enter a valid email (e.g., example@example.com).\n");
+                        System.out.print("Would you like to try again or go back to the main menu? (try again: T / main menu: M): ");
+                        String response = scanner.nextLine();
+                        if (response.equalsIgnoreCase("M")) {
+                            goBackToMainMenu();
+                            return;
+                        }
                     }
                 }
                 System.out.println("Are you sure you want to update your email address? (Y/N)");
                 if (!scanner.nextLine().equalsIgnoreCase("Y")) {
                     System.out.println("Update canceled by user.");
+                    goBackToMainMenu();
                     return;
                 }
-                patient.setEmailAddress(value);
+                patient.setEmailAddress(emailAddress);
                 break;
+            case 3:
+                return;
             default:
                 System.err.println("Invalid choice. Update aborted.");
+                goBackToMainMenu();
                 return;
         }
         boolean success = patientDAO.updatePatient(patient);
         printResult(success, "Personal information updated successfully.", "Error: Unable to update personal information.");
+        goBackToMainMenu();
     }
 
     // Utility method to print result messages
@@ -135,27 +154,55 @@ public class PatientController {
         }
     }
 
-    // View available appointment slots
-    public void viewAvailableAppointments() {
-        appointmentController.viewAvailableAppointments();
-    }
-
-    // Schedule a new appointment
-    public void scheduleAppointment(String doctorId, String date, String timeSlot) {
-        boolean success = appointmentController.scheduleAppointment(doctorId, patient.getUserId(), date, timeSlot, "patient");
-        printResult(success, "Appointment successfully scheduled.", "Error: Unable to schedule appointment. Please try another slot.");
+    // View available appointment slots and schedule an appointment
+    public void viewAndScheduleAppointments() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the date for which you want to view available slots (yyyy-MM-dd): ");
+        String date = scanner.nextLine();
+        List<String> availableSlots = appointmentController.getAvailableSlotsAcrossDoctors(date);
+        if (availableSlots.isEmpty()) {
+            System.out.println("No available appointment slots on " + date);
+        } else {
+            System.out.println("Available Appointment Slots on " + date + ":");
+            availableSlots.forEach(System.out::println);
+            System.out.print("\nWould you like to schedule an appointment? (Y/N): ");
+            String response = scanner.nextLine();
+            if (response.equalsIgnoreCase("Y")) {
+                System.out.print("Enter Doctor ID: ");
+                String doctorId = scanner.nextLine();
+                System.out.print("Enter the time slot for the appointment (e.g., 10:00 AM): ");
+                String timeSlot = scanner.nextLine();
+                boolean success = appointmentController.scheduleAppointment(doctorId, patient.getUserId(), date, timeSlot, "patient");
+                printResult(success, "Appointment successfully scheduled.", "Error: Unable to schedule appointment. Please try another slot.");
+            }
+        }
+        goBackToMainMenu();
     }
 
     // Reschedule an existing appointment
-    public void rescheduleAppointment(String appointmentId, String newDate, String newTimeSlot) {
+    public void rescheduleAppointment() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Appointment ID to reschedule: ");
+        String appointmentId = scanner.nextLine();
+        System.out.print("Enter the new date for the appointment (yyyy-MM-dd): ");
+        String newDate = scanner.nextLine();
+        System.out.print("Enter the new time slot for the appointment (e.g., 10:00 AM): ");
+        String newTimeSlot = scanner.nextLine();
+
         boolean success = appointmentController.rescheduleAppointment(appointmentId, newDate, newTimeSlot, "patient");
         printResult(success, "Appointment successfully rescheduled.", "Error: Unable to reschedule appointment. Please try another slot.");
+        goBackToMainMenu();
     }
 
     // Cancel an existing appointment
-    public void cancelAppointment(String appointmentId) {
+    public void cancelAppointment() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Appointment ID to cancel: ");
+        String appointmentId = scanner.nextLine();
+
         boolean success = appointmentController.cancelAppointment(appointmentId, "patient");
         printResult(success, "Appointment successfully canceled.", "Error: Unable to cancel appointment.");
+        goBackToMainMenu();
     }
 
     // View patient's scheduled appointments
@@ -169,6 +216,7 @@ public class PatientController {
                 System.out.println("Appointment ID: " + appointment.getAppointmentId() + ", Doctor ID: " + appointment.getDoctorId() + ", Date: " + appointment.getDate() + ", Time Slot: " + appointment.getTimeSlot() + ", Status: " + appointment.getStatus());
             }
         }
+        goBackToMainMenu();
     }
 
     // View patient's past appointment outcomes
@@ -181,6 +229,18 @@ public class PatientController {
             for (Appointment appointment : pastAppointments) {
                 System.out.println("Appointment ID: " + appointment.getAppointmentId() + ", Outcome: " + (appointment.getOutcome() != null ? appointment.getOutcome().getConsultationNotes() : "No outcome available"));
             }
+        }
+        goBackToMainMenu();
+    }
+
+    // Utility method to provide option to return to the main menu
+    private void goBackToMainMenu() {
+        System.out.println("\nPress 'M' to return to the main menu.");
+        Scanner scanner = new Scanner(System.in);
+        String response = scanner.nextLine();
+        while (!response.equalsIgnoreCase("M")) {
+            System.out.println("Invalid input. Press 'M' to return to the main menu.");
+            response = scanner.nextLine();
         }
     }
 }
