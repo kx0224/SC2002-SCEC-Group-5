@@ -1,7 +1,7 @@
 package roles;
 
-import model.User;
-import model.UserRoles;
+import models.User;
+import models.UserRoles;
 
 public class Pharmacist extends User {
     // Fields

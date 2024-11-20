@@ -3,14 +3,12 @@ import java.util.List;
 import java.util.*;
 import java.util.Scanner;
 import controllers.AdminController;
-import model.Appointment;
-
+import models.Appointment;
+import models.Inventory;
+import models.Medication;
+import models.ReplenishmentRequest;
+import models.User;
 import roles.*;
-
-import model.Inventory;
-import model.Medication;
-import model.ReplenishmentRequest;
-import model.User;
 public class AdminView {
     private AdminController adminController;
     private Scanner sc = new Scanner(System.in);
@@ -164,7 +162,7 @@ public class AdminView {
 
     public void viewReplenishmentRequests() {
         System.out.println("\n--- View Replenishment Requests ---");
-        List<model.ReplenishmentRequest> requests = adminController.getReplenishmentRequests();
+        List<models.ReplenishmentRequest> requests = adminController.getReplenishmentRequests();
 
         if (requests.isEmpty()) {
             System.out.println("No pending replenishment requests.");

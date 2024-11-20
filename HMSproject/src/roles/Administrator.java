@@ -1,9 +1,7 @@
 package roles;
 
-import java.util.*;
-
-import model.User;
-import model.UserRoles;
+import models.User;
+import models.UserRoles;
 
 public class Administrator extends User {
     // Fields

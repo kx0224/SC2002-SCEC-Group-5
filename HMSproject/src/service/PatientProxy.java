@@ -1,10 +1,10 @@
 package service;
 
-import model.MedicalRecords;
-import model.PrescribedMed;
-import roles.Patient;
-import model.PatientInterface;
 import java.util.List;
+import models.MedicalRecords;
+import models.PatientInterface;
+import models.PrescribedMed;
+import roles.Patient;
 
 public class PatientProxy implements PatientInterface {
 

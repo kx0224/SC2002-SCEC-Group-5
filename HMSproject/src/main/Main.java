@@ -1,5 +1,5 @@
 package main;
-import domain.*;
+import models.*;
 import controllers.*;
 import managers.*;
 

@@ -4,6 +4,7 @@ import HMSystem.controllers.PatientController;
 import HMSystem.managers.*;
 import HMSystem.domain.MedicalRecords;
 import HMSystem.proxy.PatientProxy;
+import managers.PrescriptionManager;
 import HMSystem.domain.AppointmentOutcome;
 import HMSystem.controllers.medicalRecordsController;
 import HMSystem.domain.Appointment;

@@ -1,7 +1,7 @@
 package roles;
-import model.PatientInterface;
-import model.User;
-import model.UserRoles;
+import models.PatientInterface;
+import models.User;
+import models.UserRoles;
 
 public class Patient extends User implements PatientInterface {
     String dateOfBirth;
