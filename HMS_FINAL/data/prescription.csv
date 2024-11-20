@@ -1,0 +1,3 @@
+﻿Prescription ID,Appointment ID,Medication ID,Quantity,Status
+PP001,D001-18/10/2024-11:00,M005,1,Pending
+PP002,A002,M002,15,Dispensed

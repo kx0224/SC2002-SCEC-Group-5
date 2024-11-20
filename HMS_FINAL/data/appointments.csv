@@ -1,0 +1,9 @@
+appointmentID,patientID,doctorID,doctorName,date,time,status,outcome,service,medication,notes
+A003,PT001,D001,John Arknights,18/10/2024,11:00,COMPLETE,Follow-up Needed,Cardiology Consultation,Insulin,Cardiology follow-up for Diabetes control
+A001,PT001,D002,Winnie Pooh,19/10/2024,11:00,SCHEDULED,null,null,null,null
+A002,PT002,D001,John Arknights,18/10/2024,12:00,SCHEDULED,null,null,null,null
+A004,PT003,D002,Winnie Pooh,19/10/2024,10:00,CONFIRMED,null,null,null,null
+A005,null,D001,John Arknights,19/10/2024,12:30,PENDING,null,null,null,null
+A006,PT005,D003,Yi Sheng,20/10/2024,9:00,CANCELLED,null,null,null,null
+A012,PT001,D001,John Arknights,22/10/2024,15:00,CONFIRMED,null,null,null,null
+A013,null,D003,Yi Sheng,23/10/2024,16:00,PENDING,null,null,null,null
