@@ -1,11 +1,13 @@
-staffID,name,dateOfBirth,role,department,gender,age,contactNumber,emailAddress,address,shift,emergencyContact,password
-DOC105,Dr. Michael Lee,1973-02-25,Doctor,General,Male,50,+65 8123 4567,michael.lee@sghealth.com,456 Tampines Ave 9,Night,+65 9456 7890,password105
-DOC108,Dr. Emily Zhang,1988-03-12,Doctor,General,Female,35,+65 9234 5678,emily.zhang@sghealth.com,654 Pasir Ris Dr 10,Day,+65 9456 1234,password108
-DOC110,Dr. Priya Singh,1982-09-30,Doctor,General,Female,41,+65 9456 7899,priya.singh@sghealth.com,123 Jurong West St 52,Day,+65 9345 8765,password110
-DOC111,Dr. Ahmed Khan,1984-03-15,Doctor,General,Male,39,+65 8123 8901,ahmed.khan@sghealth.com,456 Woodlands Ave 1,Day,+65 9234 5671,password111
-DOC112,Dr. Rachel Teo,1979-12-05,Doctor,General,Female,44,+65 8765 1234,rachel.teo@sghealth.com,789 Bedok North St 3,Day,+65 9876 5430,password112
-PHM201,Alex Tan,1993-06-01,Pharmacist,Pharmacy,Male,30,+65 9234 8765,alex.tan@sghealth.com,321 Hougang Ave 8,Weekend,+65 9456 7893,password201
-PHM202,Emma Wong,1991-11-20,Pharmacist,Pharmacy,Female,32,+65 9345 6789,emma.wong@sghealth.com,654 Choa Chu Kang Ave 4,Day,+65 9123 4567,password202
-PHM203,Liam Koh,1986-04-11,Pharmacist,Pharmacy,Male,37,+65 9456 1234,liam.koh@sghealth.com,789 Bukit Batok West Ave 6,Night,+65 9654 3212,password203
-ADM301,John Lim,1973-08-25,Administrator,Admin,Male,50,+65 9123 4567,john.lim@sghealth.com,123 Raffles Place,Day,+65 9234 8765,password301
-ADM302,Jane Tan,1975-03-30,Administrator,Admin,Female,48,+65 9876 5432,jane.tan@sghealth.com,456 Marina Bay Sands,Day,+65 9345 6788,password302
+Staff ID,Name,Role,Gender,Age,Phone,Email
+D001,John Arknights,Doctor,Male,42,1234567890,johnark@hospital.com
+P001,Marcus Goh,Pharmacist,Male,64,3456789012,gohmarcus@hospital.com
+A003,Cillia Tan,Administrator,Female,30,2374536245,cilliatan@hospital.com
+A001,Ai min,Administrator,Female,40,4567890123,ai.min@hospital.com
+A002,Emily Tan,Administrator,Female,38,2345678901,emily.tan@hospital.com
+A004,Tiffany Roy,Administrator,Female,42,2329427923,tiffany.roy@hospital.com
+D002,Winnie Pooh,Doctor,Male,32,4249247363,winnie.pooh@hospital.com
+D003,Yi Sheng,Doctor,Female,50,4842857296,yi.sheng@hospital.com
+D004,Bo Shi,Doctor,Male,28,2972462428,boshi@hospital.com
+P002,Parmasean Tze,Pharmacist,Male,48,2482627381,sean.tze@hospital.com
+P003,Millian Wong,Pharmacist,Female,72,4279291318,milly.w@hospital.com
+D005,Joyanne Fern,Doctor,Female,29,3294719483,joyfern@hospital.com
