@@ -4,20 +4,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.Map;
 import java.util.Scanner;
-import java.time.format.DateTimeFormatter;
 import domain.Appointment;
 import domain.AppointmentOutcome;
 import domain.AppointmentStatus;
 
-
 public class AppointmentManager {
     protected Map<String, Appointment> Appointments = new HashMap<>();
     protected Map<String, AppointmentOutcome> appointmentOutcomes = new HashMap<>();
-
 
     public AppointmentManager() {
         this.Appointments = new HashMap<>();
@@ -43,7 +41,7 @@ public class AppointmentManager {
                     AppointmentStatus status = AppointmentStatus.valueOf(itemData[6].trim().toUpperCase());
                     String outcome = itemData[7].trim();
                     String service = itemData[8].trim();
-                    String medication = itemData[9].trim();
+                    String medication = itemData.length > 9 ? itemData[9].trim() : null;
 
                     try {
                         LocalDate date = LocalDate.parse(dateString, dateFormatter);
@@ -84,37 +82,38 @@ public class AppointmentManager {
         }
     }
 
-
     public List<Appointment> getDoctorPersonalSchedule(String doctorId) {
-    List<Appointment> personalSchedule = new ArrayList<>();
+        List<Appointment> personalSchedule = new ArrayList<>();
 
-    for (Appointment appointment : Appointments.values()) {
-        if (appointment.get_doctor_id().equalsIgnoreCase(doctorId) &&
-                (appointment.get_status() == AppointmentStatus.CONFIRMED ||
-                        appointment.get_status() == AppointmentStatus.SCHEDULED)) {
-            personalSchedule.add(appointment);
+        for (Appointment appointment : Appointments.values()) {
+            if (appointment.get_doctor_id().equalsIgnoreCase(doctorId) &&
+                    (appointment.get_status() == AppointmentStatus.CONFIRMED ||
+                            appointment.get_status() == AppointmentStatus.SCHEDULED)) {
+                personalSchedule.add(appointment);
+            }
         }
-    }
 
-    return personalSchedule;
-}
+        return personalSchedule;
+    }
 
     public Map<String, Appointment> getAllAppointments() {
         return Appointments;
     }
+
     public Appointment getAppointmentById(String appointmentId) {
         return Appointments.get(appointmentId);
     }
+
     public void addAppointment(String doctorId, String doctorName, LocalDate date, LocalTime startTime, LocalTime endTime) {
         LocalTime currentTime = startTime;
 
         while (currentTime.isBefore(endTime)) {
             // Create a new appointment slot for every 30 minutes interval
             Appointment newAppointment = new Appointment(doctorId, doctorName, date, currentTime);
-            newAppointment.set_appointment_id(doctorId,date,currentTime);
+            newAppointment.set_appointment_id(doctorId, date, currentTime);
             newAppointment.set_status(AppointmentStatus.PENDING);
             Appointments.put(newAppointment.get_appointment_id(), newAppointment);
-            System.out.println("Appointment with ID "+newAppointment.get_appointment_id()+" has been added.");
+            System.out.println("Appointment with ID " + newAppointment.get_appointment_id() + " has been added.");
 
             // Increment current time by 30 minutes
             currentTime = currentTime.plusMinutes(30);
@@ -141,23 +140,24 @@ public class AppointmentManager {
         return true;
     }
 
-
-
     public List<AppointmentOutcome> getAllOutcomesByPatientId(String patientId) {
         List<AppointmentOutcome> outcomesForPatient = new ArrayList<>();
         for (AppointmentOutcome outcome : appointmentOutcomes.values()) {
             if (outcome.getPatientID().equals(patientId)) {
                 Appointment appointment = Appointments.get(outcome.getAppointment_id());
                 if (appointment != null && appointment.get_status() == AppointmentStatus.COMPLETE) {
-                outcomesForPatient.add(outcome);}
+                    outcomesForPatient.add(outcome);
+                }
             }
         }
         return outcomesForPatient;
     }
+
     public Map<String, AppointmentOutcome> getAllAppointmentOutcomes() {
         return appointmentOutcomes;
     }
-    public AppointmentOutcome getAppointmentOutcomeByID(String AppointmentID){
+
+    public AppointmentOutcome getAppointmentOutcomeByID(String AppointmentID) {
         return appointmentOutcomes.get(AppointmentID);
     }
 
@@ -170,16 +170,19 @@ public class AppointmentManager {
         System.out.println("Status: " + appointment.get_status());
         System.out.println("----------------------------------");
     }
+
     public int countTotalAppointments(String patientId) {
         int count = 0;
         for (Appointment appointment : Appointments.values()) {
-            if (appointment.get_patient_id() != null){
-            if (appointment.get_patient_id().equals(patientId) && appointment.get_status() == AppointmentStatus.CONFIRMED) {
-                count++;
-            }}
+            if (appointment.get_patient_id() != null) {
+                if (appointment.get_patient_id().equals(patientId) && appointment.get_status() == AppointmentStatus.CONFIRMED) {
+                    count++;
+                }
+            }
         }
         return count;
     }
+
     public boolean Appointmentlimit(String patientId, LocalDate date) {
         // Check if patient has reached maximum of 3 appointments
         if (countTotalAppointments(patientId) >= 3) {
@@ -195,9 +198,11 @@ public class AppointmentManager {
 
         return true;
     }
+
     private boolean hasAppointmentOnDate(String patientId, LocalDate date) {
         for (Appointment appointment : Appointments.values()) {
-            if (appointment.get_patient_id().equalsIgnoreCase(patientId) &&
+            if (appointment.get_patient_id() != null &&
+                    appointment.get_patient_id().equalsIgnoreCase(patientId) &&
                     appointment.get_date().equals(date) &&
                     (appointment.get_status() == AppointmentStatus.CONFIRMED ||
                             appointment.get_status() == AppointmentStatus.SCHEDULED)) {
@@ -207,7 +212,7 @@ public class AppointmentManager {
         return false; // No appointment found on the specified date
     }
 
-    public boolean rescheduledAppointments(String appointmentId){
+    public boolean rescheduledAppointments(String appointmentId) {
         Appointment appointment = Appointments.get(appointmentId);
         if (appointment == null) {
             System.out.println("Appointment not found.");
@@ -226,12 +231,12 @@ public class AppointmentManager {
             return false;
         }
 
-
         // Set the status to CANCELED
         appointment.set_status(AppointmentStatus.CANCELLED);
         appointment.set_patient_id(null);
         return true;
     }
+
     public boolean acceptAppointment(String appointmentId) {
         // Find the appointment
         Appointment appointment = Appointments.get(appointmentId);
@@ -239,11 +244,8 @@ public class AppointmentManager {
             return false;
         }
 
-
-        // Set the status to CANCELED
+        // Set the status to CONFIRMED
         appointment.set_status(AppointmentStatus.CONFIRMED);
         return true;
     }
-
-
 }

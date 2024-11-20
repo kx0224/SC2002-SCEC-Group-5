@@ -56,8 +56,8 @@ public class PatientView {
             } else {
                 System.out.println("Medications  : None");
             }
-//            System.out.println("Notes  : " + appointmentOutcome.getConsultation_notes());
-            }
+
+        }
     }
 
     public void displayDiagnosis(PatientProxy patientProxy) {
