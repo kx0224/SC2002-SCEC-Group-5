@@ -1,7 +1,7 @@
 package users;
-import java.util.*;
-import domain.User;
-import domain.UserRoles;
+
+import models.User;
+import models.UserRoles;
 
 public class Administrator extends User {
     public Integer age;

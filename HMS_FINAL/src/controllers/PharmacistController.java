@@ -4,12 +4,12 @@ import java.util.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import users.Pharmacist;
-import domain.Inventory;
-import views.PharmacistView;
 import managers.*;
-import util.prescriptionStatus;
-import domain.Medication;
-import domain.PrescribedMed;
+import menu.PharmacistView;
+import models.Inventory;
+import models.Medication;
+import models.PrescribedMed;
+import models.prescriptionStatus;
 
 public class PharmacistController {
     private Pharmacist pharmacist;
@@ -67,36 +67,37 @@ public class PharmacistController {
         String preID = pharmacistView.promptPrescriptionID().toUpperCase();
         if (preID != null) {
             PrescribedMed prescription = prescriptionManager.getPrescription(preID);
-            if (prescription.getStatus().equals(prescriptionStatus.DISPENSED)) {
-                System.out.println("Prescription " + preID.toUpperCase() + " has already been fulfilled.");
-            return;}
-                if (prescription != null) {
-                    Scanner sc = new Scanner(System.in);
-                    pharmacistView.displayPrescriptionRecord(prescription);
-                    System.out.print("Fulfill this prescription? (Y/N): ");
-                    String fulfill = sc.nextLine().trim();
-                    if (fulfill.equalsIgnoreCase("Y")) {
-                        Medication medication = medicationInventory.getMedicationByID(prescription.getMedicineID());
-                        if (medication == null) {
-                            System.out.println("Medication not found in inventory.");
-                            return;
-                        }
-                        if (prescription.getQuantity() > medication.getStock()) {
-                            System.out.println("Not enough medication stock to fulfill request.");
+            if (prescription != null) {
+                if (prescription.getStatus().equals(prescriptionStatus.DISPENSED)) {
+                    System.out.println("Prescription " + preID.toUpperCase() + " has already been fulfilled.");
+                    return;
+                }
+                Scanner sc = new Scanner(System.in);
+                pharmacistView.displayPrescriptionRecord(prescription);
+                System.out.print("Fulfill this prescription? (Y/N): ");
+                String fulfill = sc.nextLine().trim();
+                if (fulfill.equalsIgnoreCase("Y")) {
+                    Medication medication = medicationInventory.getMedicationByID(prescription.getMedicineID());
+                    if (medication == null) {
+                        System.out.println("Medication not found in inventory.");
+                        return;
+                    }
+                    if (prescription.getQuantity() > medication.getStock()) {
+                        System.out.println("Not enough medication stock to fulfill request.");
+                    } else {
+                        boolean success = medicationInventory.updateStock(medication.getMed_id(), -prescription.getQuantity());
+                        if (success) {
+                            prescription.setStatus(prescriptionStatus.DISPENSED);
+                            System.out.println("Prescription " + prescription.getPrescription_id() + " has been fulfilled.");
+                            System.out.println("Updated Stock level for " + medication.getName() + ": " + medication.getStock());
                         } else {
-                            boolean success = medicationInventory.updateStock(medication.getMed_id(), -prescription.getQuantity());
-                            if (success) {
-                                prescription.setStatus(prescriptionStatus.DISPENSED);
-                                System.out.println("Prescription " + prescription.getPrescription_id() + " has been fulfilled.");
-                                System.out.println("Updated Stock level for " + medication.getName() + ": " + medication.getStock());
-                            } else {
-                                System.out.println("Failed to update inventory.");
-                            }
+                            System.out.println("Failed to update inventory.");
                         }
                     }
-                } else {
-                    System.out.println("Prescription not found.");
                 }
+            } else {
+                System.out.println("Prescription not found.");
+            }
 
         }
     }

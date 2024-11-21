@@ -1,7 +1,6 @@
 package users;
-import java.util.*;
-import domain.User;
-import domain.UserRoles;
+import models.User;
+import models.UserRoles;
 
 public class Patient extends User implements IPatientInfo {
     String dateOfBirth;

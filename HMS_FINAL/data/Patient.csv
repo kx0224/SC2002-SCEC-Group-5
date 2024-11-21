@@ -1,6 +1,6 @@
-﻿Patient  ID,Name,Date of Birth,Gender,Blood Type,Phone number,Email Address,Past Diagnosis ,Past Treatments
-PT001,Ryan,8/9/1999,Male,A+,1234567,Ryan@example.com,Diabetes,Insulin Treatment
-PT002,Alice,12/12/2001,Female,B+,987654321,Alice@example.com,Asthma,Inhaler Treatment
-PT003,Bob,9/11/1994,Male,O-,932675249,Bob@example.com,Fever,Prescribe Fever Medicine
-PT004,Jane,10/11/2000,Female,AB+,678945673,Jane@example.com,Typhoid,Antibiotic Therapy
-PT005,Mary,5/9/1995,Female,O+,874583923,Mary@example.com,Flu,Prescribe Flu Medicine
+﻿Patient ID,Name,Date of Birth,Gender,Blood Type,Phone Number,Email Address,Past Diagnosis,Past Treatments
+PT001,Ryan Tan,08/09/1999,Male,A+,91234567,ryan.tan@example.com,Diabetes,Insulin Treatment
+PT002,Alice Lim,12/12/2001,Female,B+,98765432,alice.lim@example.com,Asthma,Inhaler Treatment
+PT003,Bob Ng,09/11/1994,Male,O-,93267524,bob.ng@example.com,Fever,Prescribed Fever Medicine
+PT004,Jane Chua,10/11/2000,Female,AB+,67894567,jane.chua@example.com,Typhoid,Antibiotic Therapy
+PT005,Mary Lee,05/09/1995,Female,O+,87458392,mary.lee@example.com,Flu,Prescribed Flu Medicine

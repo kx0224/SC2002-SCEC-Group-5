@@ -1,15 +1,14 @@
 package controllers;
 
-import java.util.ArrayList;
 import java.util.*;
 import users.Patient;
-import views.PatientView;
 import managers.AppointmentManager;
-import domain.Appointment;
-import domain.AppointmentStatus;
-import domain.AppointmentOutcome;
-import proxy.PatientProxy;
-import domain.MedicalRecords;
+import menu.PatientView;
+import models.Appointment;
+import models.AppointmentOutcome;
+import models.AppointmentStatus;
+import models.MedicalRecords;
+import service.PatientProxy;
 
 public class PatientController extends UserController {
     private AppointmentManager manageAppts;
@@ -81,6 +80,7 @@ public class PatientController extends UserController {
                 case 9:
                     running = false;
                     break;
+
                 default:
                     patientView.showMessage("Invalid choice. Please try again.");
                     break;

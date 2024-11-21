@@ -9,9 +9,10 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.Map;
 import java.util.Scanner;
-import domain.Appointment;
-import domain.AppointmentOutcome;
-import domain.AppointmentStatus;
+
+import models.Appointment;
+import models.AppointmentOutcome;
+import models.AppointmentStatus;
 
 public class AppointmentManager {
     protected Map<String, Appointment> Appointments = new HashMap<>();

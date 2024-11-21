@@ -1,21 +1,21 @@
 package controllers;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.*;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import users.Doctor;
 import managers.*;
-import views.DoctorView;
-import domain.Inventory;
-import domain.MedicalRecords;
-import domain.Appointment;
-import domain.AppointmentOutcome;
-import domain.AppointmentStatus;
-import domain.PrescribedMed;
-import util.prescriptionStatus;
+import menu.DoctorView;
+import models.Appointment;
+import models.AppointmentOutcome;
+import models.AppointmentStatus;
+
+import models.Inventory;
+import models.MedicalRecords;
+import models.PrescribedMed;
+import models.prescriptionStatus;
+
 
 public class DoctorController {
     private AppointmentManager apptManager;
@@ -75,7 +75,7 @@ public class DoctorController {
                     break;
                 case 7:
                     appointmentID = doctorView.promptAppointmentID();
-                    recordAppointmentOutcome(appointmentID);
+                    recordAppointmentOutcome();
                     break;
                 case 8:
                     running = false;
@@ -247,48 +247,55 @@ public class DoctorController {
 
 
     // Record outcome for a specific appointment
-    public void recordAppointmentOutcome(String appointmentID) {
-        Appointment appointment = apptManager.getAllAppointments().get(appointmentID);
+    public void recordAppointmentOutcome() {
+        List<Appointment> personalSchedule = apptManager.getDoctorPersonalSchedule(doctor.getHospitalID());
+        doctorView.displayPersonalSchedule(personalSchedule);
+    
+        int index = doctorView.promptAppointmentIndex();
+        if (index < 1 || index > personalSchedule.size()) {
+            doctorView.showMessage("Invalid index. Please select a valid appointment.");
+            return;
+        }
+    
+        Appointment appointment = personalSchedule.get(index - 1);
+        String appointmentID = appointment.get_appointment_id();
         AppointmentOutcome appointmentOutcome = apptManager.getAppointmentOutcomeByID(appointmentID);
-
-        if (appointment != null) {
-            if (appointment.get_status() == AppointmentStatus.CONFIRMED) {
-                System.out.println("\n--- Record Appointment Outcome ---");
-                String outcome = doctorView.promptAppointmentOutcome();
-                String prescription = doctorView.promptAppointmentMed();
-                Integer quantity = doctorView.promptMedQuantity();
-                String service = doctorView.promptServiceType();
-
-                // Set appointment outcome details
-                appointmentOutcome.setAppointmentOutcome(outcome);
-                appointmentOutcome.setServiceType(service);
-
-                // Create and set up a new prescription
-                PrescribedMed prescribedMed = new PrescribedMed(inventory.getMedicationNameByID(prescription.toUpperCase()), quantity);
-                prescribedMed.setAppointment_id(appointmentID);
-                prescribedMed.setStatus(prescriptionStatus.PENDING);
-
-                // Generate a unique prescription ID and add it to the prescription manager
-                String pre_id = prescribedMed.generatePrescription_id(prescriptionManager.getAllPrescriptions());
-                prescribedMed.setPrescription_id(pre_id);
-                String med_id = inventory.getMed_IDbyMedicationName(prescription);
-                prescribedMed.setMedicineID(med_id);
-
-                // Use addPrescription method to properly add the prescription to the manager
-                prescriptionManager.addPrescription(prescribedMed);
-
-                // Update appointment outcome and status
-                apptManager.getAllAppointmentOutcomes().put(appointmentID, appointmentOutcome);
-                appointment.set_status(AppointmentStatus.COMPLETE);
-                apptManager.getAllAppointments().put(appointmentID, appointment);
-
-                System.out.println("Recorded outcome for Appointment ID " + appointmentID + ": " + outcome);
-            } else {
-                System.out.println("Appointment " + appointmentID + " has not been confirmed. Only can record outcomes for confirmed appointments.");
-            }
+    
+        if (appointment != null && appointment.get_status() == AppointmentStatus.CONFIRMED) {
+            System.out.println("\n--- Record Appointment Outcome ---");
+            String outcome = doctorView.promptAppointmentOutcome();
+            String prescription = doctorView.promptAppointmentMed();
+            Integer quantity = doctorView.promptMedQuantity();
+            String service = doctorView.promptServiceType();
+    
+            // Set appointment outcome details
+            appointmentOutcome.setAppointmentOutcome(outcome);
+            appointmentOutcome.setServiceType(service);
+    
+            // Create and set up a new prescription
+            PrescribedMed prescribedMed = new PrescribedMed(inventory.getMedicationNameByID(prescription.toUpperCase()), quantity);
+            prescribedMed.setAppointment_id(appointmentID);
+            prescribedMed.setStatus(prescriptionStatus.PENDING);
+    
+            // Generate a unique prescription ID and add it to the prescription manager
+            String pre_id = prescribedMed.generatePrescription_id(prescriptionManager.getAllPrescriptions());
+            prescribedMed.setPrescription_id(pre_id);
+            String med_id = inventory.getMed_IDbyMedicationName(prescription);
+            prescribedMed.setMedicineID(med_id);
+    
+            // Use addPrescription method to properly add the prescription to the manager
+            prescriptionManager.addPrescription(prescribedMed);
+    
+            // Update appointment outcome and status
+            apptManager.getAllAppointmentOutcomes().put(appointmentID, appointmentOutcome);
+            appointment.set_status(AppointmentStatus.COMPLETE);
+            apptManager.getAllAppointments().put(appointmentID, appointment);
+    
+            System.out.println("Recorded outcome for Appointment ID " + appointmentID + ": " + outcome);
         } else {
-            System.out.println("Appointment ID " + appointmentID + " not found.");
+            System.out.println("Appointment " + appointmentID + " has not been confirmed. Only can record outcomes for confirmed appointments.");
         }
     }
+    
 
 }

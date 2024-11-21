@@ -1,10 +1,14 @@
 package managers;
 import java.util.*;
+
+import models.Inventory;
+import models.PrescribedMed;
+import models.prescriptionStatus;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import domain.PrescribedMed;
-import domain.Inventory;
-import util.*;
+
+
 
 public class PrescriptionManager {
     private Map<String, PrescribedMed> prescriptionMap;
@@ -32,11 +36,11 @@ public class PrescriptionManager {
                     // Add new item to inventory
                     PrescribedMed prescribedMed = new PrescribedMed(medID,quantity);
                     String medname = inventory.getMedicationNameByID(medID);
-                    if (!medname.equals("Medication not found")) {
+                    if (medname != null) {
                         prescribedMed.setmedName(medname);
-//                        System.out.println("Medication name set to: " + medname);
                     } else {
-                        System.out.println("Failed to set medication name: " + medname);
+                        System.out.println("Failed to set medication name. Medication with ID " + medID + " was not found.");
+                        continue; // Skip adding this prescription if the medication is not found
                     }
 
                     prescribedMed.setPrescription_id(prescriptionID);

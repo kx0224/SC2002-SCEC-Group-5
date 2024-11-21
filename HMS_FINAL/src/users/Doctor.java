@@ -1,10 +1,11 @@
 package users;
 import java.util.*;
-import domain.User;
-import domain.UserRoles;
-import domain.Appointment;
-import domain.AppointmentStatus;
+
 import managers.AppointmentManager;
+import models.Appointment;
+import models.AppointmentStatus;
+import models.User;
+import models.UserRoles;
 public class Doctor extends User {
     public Integer age;
     public Doctor(String userID, String password, UserRoles role, String name, String gender, Integer age, String email, String phonenumber) {

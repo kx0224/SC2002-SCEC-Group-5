@@ -3,14 +3,14 @@ package controllers;
 import java.util.*;
 import java.util.stream.Collectors;
 import managers.AppointmentManager;
-import views.AdminView;
+import menu.AdminView;
+import models.Inventory;
+import models.Medication;
+import models.ReplenishmentRequest;
+import models.ReplenishmentStatus;
+import models.User;
+import models.UserRoles;
 import users.*;
-import domain.Inventory;
-import domain.User;
-import domain.UserRoles;
-import domain.ReplenishmentRequest;
-import domain.Medication;
-import domain.ReplenishmentStatus;
 
 public class AdminController extends UserController {
     private AppointmentManager manageAppt;
@@ -71,23 +71,20 @@ public class AdminController extends UserController {
                         }
                     }
                     case 5 -> viewAppointments();
+                    
                     case 6 -> {
-                        String AppointmentID = adminView.prompt_ApptID();
-                        viewAppointmentDetails(AppointmentID);
-                    }
-                    case 7 -> {
                         System.out.println("\n--- Approve Replenishment Request ---");
                         Req_id = adminView.prompt_reqID();
                         approveReplenishmentRequest(Req_id);
                     }
-                    case 8 -> {
+                    case 7 -> {
                         System.out.println("\n--- Reject Replenishment Request ---");
                         Req_id = adminView.prompt_reqID();
                         rejectReplenishmentRequest(Req_id);
                     }
-                    case 9 -> adminView.viewReplenishmentRequests();
-                    case 10 -> adminView.viewMedicationInventory(inventory);
-                    case 11 -> updateStock();
+                    case 8 -> adminView.viewReplenishmentRequests();
+                    case 9 -> adminView.viewMedicationInventory(inventory);
+                    case 10 -> updateStock();
                     case 0 -> {
                         System.out.println("Logging out...");
 

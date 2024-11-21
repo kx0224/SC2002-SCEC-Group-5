@@ -2,8 +2,9 @@ package controllers;
 
 import java.util.HashMap;
 import java.util.Map;
-import domain.MedicalRecords;
-import domain.PrescribedMed;
+
+import models.MedicalRecords;
+import models.PrescribedMed;
 
 public class medicalRecordsController {
     private Map<String, MedicalRecords> medicalRecords; // Map to store medical records by patient ID

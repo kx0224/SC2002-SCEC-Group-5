@@ -3,10 +3,11 @@ package controllers;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
-import domain.ReplenishmentRequest;
-import domain.Inventory;
-import domain.ReplenishmentStatus;
-import domain.Medication;
+
+import models.Inventory;
+import models.Medication;
+import models.ReplenishmentRequest;
+import models.ReplenishmentStatus;
 
 public class ReplenishmentRequestController {
     private Map<String, ReplenishmentRequest> requestList;
